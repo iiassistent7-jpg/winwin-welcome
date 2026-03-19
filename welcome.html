@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Win-Win Network — Добро пожаловать</title>
+
+  <meta name="description" content="Recommend businesses to friends and earn automatically" />
+  <meta property="og:title" content="Win-Win Network" />
+  <meta property="og:description" content="Everyone wins. Recommend. Earn. Grow." />
+  <meta property="og:image" content="https://iiassistent7-jpg.github.io/winwin-invite/preview.png" />
+  <meta property="og:url" content="https://iiassistent7-jpg.github.io/winwin-invite/" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#6c63ff" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-1: #0a0a0f;
+      --bg-2: #1a1a2e;
+      --accent-1: #6c63ff;
+      --accent-2: #00d4aa;
+      --text-main: #ffffff;
+      --text-muted: #a0a0b0;
+      --wa: #25d366;
+      --tg: #0088cc;
+      --card: rgba(255, 255, 255, 0.06);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --max-width: 480px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.14), transparent 35%),
+        radial-gradient(circle at 80% 10%, rgba(0, 212, 170, 0.12), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2), #111122, var(--bg-1));
+      background-size: 180% 180%;
+      animation: bgShift 15s ease infinite;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    body.rtl { direction: rtl; }
+
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .shell {
+      width: 100%;
+      max-width: var(--max-width);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: pageIn 0.6s var(--ease-out) forwards;
+    }
+
+    @keyframes pageIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel {
+      position: relative;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      padding: 24px 22px 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(108,99,255,0.4), rgba(0,212,170,0.18), rgba(255,255,255,0.05));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* КНОПКИ ЯЗЫКА */
+    .lang-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .lang-btn {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+      white-space: nowrap;
+    }
+
+    .lang-btn:hover,
+    .lang-btn.active {
+      background: linear-gradient(135deg, rgba(108,99,255,0.3), rgba(0,212,170,0.2));
+      border-color: rgba(108,99,255,0.5);
+      color: var(--text-main);
+    }
+
+    /* ШАПКА */
+    .header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .invited-text {
+      margin: 0 0 4px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .logo {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .logo-sub {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+      margin: 0 0 10px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .hero-slogan {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.01em;
+    }
+
+    /* КАРТОЧКИ */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px 10px;
+      text-align: center;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: cardIn 0.5s var(--ease-out) forwards;
+    }
+
+    .step:nth-child(1) { animation-delay: 0.10s; }
+    .step:nth-child(2) { animation-delay: 0.20s; }
+    .step:nth-child(3) { animation-delay: 0.30s; }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-icon {
+      width: 30px;
+      height: 30px;
+      fill: var(--accent-2);
+      flex-shrink: 0;
+    }
+
+    .step .label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .step .hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* КНОПКИ */
+    .actions {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      outline: none;
+      text-decoration: none;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 56px;
+      padding: 15px 20px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), filter 0.22s var(--ease-out);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+      will-change: transform;
+    }
+
+    .btn:hover  { transform: scale(1.03); filter: brightness(1.04); }
+    .btn:active { transform: scale(0.98); }
+    .btn:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 3px; }
+
+    .btn.wa { background: linear-gradient(135deg, #22c55e, var(--wa)); }
+    .btn.wa:hover { box-shadow: 0 0 0 1px rgba(37,211,102,0.25), 0 10px 30px rgba(37,211,102,0.34); }
+
+    .btn.tg { background: linear-gradient(135deg, #149adf, var(--tg)); }
+    .btn.tg:hover { box-shadow: 0 0 0 1px rgba(0,136,204,0.25), 0 10px 30px rgba(0,136,204,0.34); }
+
+    .btn svg { width: 22px; height: 22px; flex: 0 0 22px; fill: #fff; }
+
+    /* ФУТЕР */
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-muted);
+    }
+    .footer .copyright { font-size: 0.84rem; margin-bottom: 4px; }
+    .footer .note      { font-size: 0.72rem; opacity: 0.9; }
+
+    /* МОБАЙЛ */
+    @media (max-width: 640px) {
+      .panel { padding: 20px 16px 18px; border-radius: 24px; }
+      .steps { grid-template-columns: 1fr; }
+      .step {
+        min-height: 72px;
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        padding: 14px 16px;
+        gap: 12px;
+      }
+      body.rtl .step { text-align: right; }
+      .step-icon { width: 26px; height: 26px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+
+      <div class="lang-bar" role="group" aria-label="Language">
+        <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+        <button class="lang-btn" data-lang="he">🇮🇱 עב</button>
+        <button class="lang-btn" data-lang="ar">🇸🇦 عر</button>
+        <button class="lang-btn" data-lang="ru">🇷🇺 РУ</button>
+      </div>
+
+      <header class="header">
+        <p class="invited-text" id="invited">Добро пожаловать в</p>
+        <h1 class="logo">Win-Win</h1>
+        <div class="logo-sub">Network</div>
+      </header>
+
+      <section class="hero">
+        <p class="hero-subtitle" id="subtitle">Платформа взаимовыгодных рекомендаций<br>для бизнеса и клиентов</p>
+        <p class="hero-slogan" id="slogan">Выигрывают все</p>
+      </section>
+
+      <section class="steps" aria-label="Three sides">
+        <article class="step">
+          <!-- Агент — рукопожатие (Phosphor Icons) -->
+          <svg class="step-icon" viewBox="0 0 256 256" aria-hidden="true">
+            <path d="M254.3,107.91,228.78,56.85a16,16,0,0,0-21.47-7.15L182.44,62.13,130.05,48.27a8.14,8.14,0,0,0-4.1,0L73.56,62.13,48.69,49.7a16,16,0,0,0-21.47,7.15L1.7,107.9a16,16,0,0,0,7.15,21.47l27,13.51,55.49,39.63a8.06,8.06,0,0,0,2.71,1.25l64,16a8,8,0,0,0,7.6-2.1l55.07-55.08,26.42-13.21a16,16,0,0,0,7.15-21.46Zm-54.89,33.37L165,113.72a8,8,0,0,0-10.68.61C136.51,132.27,116.66,130,104,122L147.24,80h31.81l27.21,54.41ZM41.53,64,62,74.22,36.43,125.27,16,115.06Zm116,119.13L99.42,168.61l-49.2-35.14,28-56L128,64.28l9.8,2.59-45,43.68-.08.09a16,16,0,0,0,2.72,24.81c20.56,13.13,45.37,11,64.91-5L188,152.66Zm62-57.87-25.52-51L214.47,64,240,115.06Zm-87.75,92.67a8,8,0,0,1-7.75,6.06,8.13,8.13,0,0,1-1.95-.24L80.41,213.33a7.89,7.89,0,0,1-2.71-1.25L51.35,193.26a8,8,0,0,1,9.3-13l25.11,17.94L126,208.24A8,8,0,0,1,131.82,217.94Z"/>
+          </svg>
+          <div>
+            <div class="label" id="step1">Агент</div>
+            <div class="hint"  id="hint1">Рекомендуй и зарабатывай</div>
+          </div>
+        </article>
+
+        <article class="step">
+          <!-- Бизнес -->
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+          </svg>
+          <div>
+            <div class="label" id="step2">Бизнес</div>
+            <div class="hint"  id="hint2">Получай клиентов</div>
+          </div>
+        </article>
+
+        <article class="step">
+          <!-- Клиент -->
+          <svg class="step-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          <div>
+            <div class="label" id="step3">Клиент</div>
+            <div class="hint"  id="hint3">Приходи по рекомендации</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="actions">
+        <a id="waBtn" class="btn wa" href="https://wa.me/972534218573" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M19.11 17.23c-.28-.14-1.64-.81-1.9-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.89 1.09-.16.19-.33.21-.61.07-.28-.14-1.2-.44-2.28-1.41-.85-.76-1.42-1.7-1.58-1.99-.17-.28-.02-.43.12-.57.13-.13.28-.33.42-.49.14-.16.18-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.62-1.49-.85-2.05-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.47.07-.72.35-.25.28-.95.93-.95 2.27 0 1.34.97 2.64 1.11 2.82.14.19 1.9 2.9 4.6 4.07.64.28 1.14.45 1.53.58.64.2 1.23.17 1.69.1.52-.08 1.64-.67 1.87-1.32.23-.65.23-1.21.16-1.32-.06-.12-.25-.19-.53-.33Z"/>
+            <path d="M27.2 4.78A15.8 15.8 0 0 0 4.77 27.2L3 32l4.93-1.72A15.8 15.8 0 1 0 27.2 4.78Zm-11.4 25a13.08 13.08 0 0 1-6.67-1.83l-.48-.29-2.93 1.02.99-2.86-.31-.49A13.06 13.06 0 1 1 15.8 29.78Z"/>
+          </svg>
+          <span id="waText">Присоединиться через WhatsApp</span>
+        </a>
+
+        <a id="tgBtn" class="btn tg" href="https://t.me/winwin_lead_bot" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21.94 4.67c.18-.84-.62-1.53-1.4-1.2L2.24 10.7c-.86.34-.81 1.58.07 1.85l4.64 1.45 1.8 5.59c.25.78 1.24 1.01 1.82.42l2.59-2.63 4.95 3.65c.78.58 1.88.15 2.06-.8l1.77-15.56ZM9.16 13.55l9.27-7.02-7.28 8.39a.88.88 0 0 0-.18.36l-.72 2.95-1.09-3.37a.86.86 0 0 0-.57-.55l-2.76-.86 13.6-5.4-9.9 7.5a.88.88 0 0 0-.37.48Z"/>
+          </svg>
+          <span id="tgText">Присоединиться через Telegram</span>
+        </a>
+      </section>
+
+      <footer class="footer">
+        <div class="copyright">Win-Win Network © 2025</div>
+        <div class="note" id="footerNote">Бесплатно для агентов • Эффективно для бизнеса</div>
+      </footer>
+
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const TEXTS = {
+        en: {
+          dir: "ltr", htmlLang: "en",
+          invited:  "Welcome to",
+          subtitle: "A platform of mutual recommendations<br>for business and clients",
+          slogan:   "Everyone wins",
+          step1: "Agent",    hint1: "Recommends & earns",
+          step2: "Business", hint2: "Receives clients",
+          step3: "Client",   hint3: "Comes by referral",
+          wa: "Join via WhatsApp",
+          tg: "Join via Telegram",
+          footer: "Free for agents \u2022 Effective for businesses"
+        },
+        he: {
+          dir: "rtl", htmlLang: "he",
+          invited:  "\u05d1\u05e8\u05d5\u05db\u05d9\u05dd \u05d4\u05d1\u05d0\u05d9\u05dd \u05d0\u05dc",
+          subtitle: "\u05e4\u05dc\u05d8\u05e4\u05d5\u05e8\u05de\u05ea \u05d4\u05de\u05dc\u05e6\u05d5\u05ea \u05d4\u05d3\u05d3\u05d9\u05d5\u05ea<br>\u05dc\u05e2\u05e1\u05e7\u05d9\u05dd \u05d5\u05dc\u05dc\u05e7\u05d5\u05d7\u05d5\u05ea",
+          slogan:   "\u05db\u05d5\u05dc\u05dd \u05de\u05e8\u05d5\u05d5\u05d9\u05d7\u05d9\u05dd",
+          step1: "\u05e1\u05d5\u05db\u05df",   hint1: "\u05de\u05de\u05dc\u05d9\u05e5 \u05d5\u05de\u05e8\u05d5\u05d5\u05d9\u05d7",
+          step2: "\u05e2\u05e1\u05e7",         hint2: "\u05de\u05e7\u05d1\u05dc \u05dc\u05e7\u05d5\u05d7\u05d5\u05ea",
+          step3: "\u05dc\u05e7\u05d5\u05d7",   hint3: "\u05de\u05d2\u05d9\u05e2 \u05d1\u05d4\u05de\u05dc\u05e6\u05d4",
+          wa: "\u05d4\u05e6\u05d8\u05e8\u05e4\u05d5 \u05d3\u05e8\u05da WhatsApp",
+          tg: "\u05d4\u05e6\u05d8\u05e8\u05e4\u05d5 \u05d3\u05e8\u05da Telegram",
+          footer: "\u05d7\u05d9\u05e0\u05dd \u05dc\u05e1\u05d5\u05db\u05e0\u05d9\u05dd \u2022 \u05d9\u05e2\u05d9\u05dc \u05dc\u05e2\u05e1\u05e7\u05d9\u05dd"
+        },
+        ar: {
+          dir: "rtl", htmlLang: "ar",
+          invited:  "\u0623\u0647\u0644\u0627\u064b \u0628\u0643 \u0641\u064a",
+          subtitle: "\u0645\u0646\u0635\u0629 \u062a\u0648\u0635\u064a\u0627\u062a \u0645\u062a\u0628\u0627\u062f\u0644\u0629<br>\u0644\u0644\u0623\u0639\u0645\u0627\u0644 \u0648\u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+          slogan:   "\u0627\u0644\u062c\u0645\u064a\u0639 \u064a\u0631\u0628\u062d",
+          step1: "\u0648\u0643\u064a\u0644",   hint1: "\u064a\u0648\u0635\u064a \u0648\u064a\u0643\u0633\u0628",
+          step2: "\u0634\u0631\u0643\u0629",   hint2: "\u062a\u062d\u0635\u0644 \u0639\u0644\u0649 \u0639\u0645\u0644\u0627\u0621",
+          step3: "\u0639\u0645\u064a\u0644",   hint3: "\u064a\u0623\u062a\u064a \u0628\u062a\u0648\u0635\u064a\u0629",
+          wa: "\u0627\u0646\u0636\u0645 \u0639\u0628\u0631 WhatsApp",
+          tg: "\u0627\u0646\u0636\u0645 \u0639\u0628\u0631 Telegram",
+          footer: "\u0645\u062c\u0627\u0646\u064a \u0644\u0644\u0648\u0643\u0644\u0627\u0621 \u2022 \u0641\u0639\u0651\u0627\u0644 \u0644\u0644\u0623\u0639\u0645\u0627\u0644"
+        },
+        ru: {
+          dir: "ltr", htmlLang: "ru",
+          invited:  "\u0414\u043e\u0431\u0440\u043e \u043f\u043e\u0436\u0430\u043b\u043e\u0432\u0430\u0442\u044c \u0432",
+          subtitle: "\u041f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u0430 \u0432\u0437\u0430\u0438\u043c\u043e\u0432\u044b\u0433\u043e\u0434\u043d\u044b\u0445 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u0439<br>\u0434\u043b\u044f \u0431\u0438\u0437\u043d\u0435\u0441\u0430 \u0438 \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432",
+          slogan:   "\u0412\u044b\u0438\u0433\u0440\u044b\u0432\u0430\u044e\u0442 \u0432\u0441\u0435",
+          step1: "\u0410\u0433\u0435\u043d\u0442",    hint1: "\u0420\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442 \u0438 \u0437\u0430\u0440\u0430\u0431\u0430\u0442\u044b\u0432\u0430\u0435\u0442",
+          step2: "\u0411\u0438\u0437\u043d\u0435\u0441", hint2: "\u041f\u043e\u043b\u0443\u0447\u0430\u0435\u0442 \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432",
+          step3: "\u041a\u043b\u0438\u0435\u043d\u0442", hint3: "\u041f\u0440\u0438\u0445\u043e\u0434\u0438\u0442 \u043f\u043e \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u0438",
+          wa: "\u041f\u0440\u0438\u0441\u043e\u0435\u0434\u0438\u043d\u0438\u0442\u044c\u0441\u044f \u0447\u0435\u0440\u0435\u0437 WhatsApp",
+          tg: "\u041f\u0440\u0438\u0441\u043e\u0435\u0434\u0438\u043d\u0438\u0442\u044c\u0441\u044f \u0447\u0435\u0440\u0435\u0437 Telegram",
+          footer: "\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u043e \u0434\u043b\u044f \u0430\u0433\u0435\u043d\u0442\u043e\u0432 \u2022 \u042d\u0444\u0444\u0435\u043a\u0442\u0438\u0432\u043d\u043e \u0434\u043b\u044f \u0431\u0438\u0437\u043d\u0435\u0441\u0430"
+        }
+      };
+
+      function detectLang() {
+        const n = navigator.language || "";
+        if (n.startsWith("he") || n.startsWith("iw")) return "he";
+        if (n.startsWith("ar")) return "ar";
+        if (n.startsWith("ru") || n.startsWith("uk") || n.startsWith("be")) return "ru";
+        return "en";
+      }
+
+      function applyLang(lang) {
+        const t = TEXTS[lang] || TEXTS.en;
+        document.documentElement.lang = t.htmlLang;
+        document.body.dir = t.dir;
+        document.body.classList.toggle("rtl", t.dir === "rtl");
+
+        document.getElementById("invited").textContent    = t.invited;
+        document.getElementById("subtitle").innerHTML     = t.subtitle;
+        document.getElementById("slogan").textContent     = t.slogan;
+        document.getElementById("step1").textContent      = t.step1;
+        document.getElementById("hint1").textContent      = t.hint1;
+        document.getElementById("step2").textContent      = t.step2;
+        document.getElementById("hint2").textContent      = t.hint2;
+        document.getElementById("step3").textContent      = t.step3;
+        document.getElementById("hint3").textContent      = t.hint3;
+        document.getElementById("waText").textContent     = t.wa;
+        document.getElementById("tgText").textContent     = t.tg;
+        document.getElementById("footerNote").textContent = t.footer;
+
+        document.querySelectorAll(".lang-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.lang === lang);
+        });
+      }
+
+      // welcome.html — без реферала, просто общий вход
+      document.getElementById("waBtn").href = "https://wa.me/972534218573";
+      document.getElementById("tgBtn").href = "https://t.me/winwin_lead_bot";
+
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", () => applyLang(btn.dataset.lang));
+      });
+
+      applyLang(detectLang());
+    })();
+  </script>
+</body>
+</html>
