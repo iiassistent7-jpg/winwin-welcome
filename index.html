@@ -488,9 +488,21 @@
         });
       }
 
+      // Приветственные тексты по языку для WA (одно нажатие — отправить)
+      const waTexts = {
+        ru: "Привет! 👋",
+        he: "שלום! 👋",
+        ar: "مرحباً! 👋",
+        en: "Hi! 👋",
+      };
+
+      // Определяем язык для ссылок
+      const linkLang = detectLang();
+      const waGreet = encodeURIComponent(waTexts[linkLang] || waTexts.en);
+
       // welcome.html — без реферала, просто общий вход
-      document.getElementById("waBtn").href = "https://wa.me/972534218573";
-      document.getElementById("tgBtn").href = "https://t.me/winwin_lead_bot";
+      document.getElementById("waBtn").href = "https://wa.me/972534218573?text=" + waGreet;
+      document.getElementById("tgBtn").href = "https://t.me/winwin_lead_bot?start=start";
 
       document.querySelectorAll(".lang-btn").forEach(btn => {
         btn.addEventListener("click", () => applyLang(btn.dataset.lang));
