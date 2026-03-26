@@ -143,13 +143,27 @@
       margin-top: 2px;
     }
 
+    /* ── КНОПКА "КАК ЭТО РАБОТАЕТ?" ── */
+    .btn-outline {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 24px; margin-top: 16px;
+      background: transparent; color: var(--text-muted);
+      text-decoration: none; font-size: 0.9rem; font-weight: 600;
+      border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s var(--ease-out); cursor: pointer;
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.05); border-color: #fff; color: #fff;
+      transform: translateY(-2px);
+    }
+
     /* ── ПОЛЯ ── */
     .field { margin-bottom: 24px; }
     
     .field label {
       display: block; font-size: 0.85rem; font-weight: 600;
       color: var(--text-muted); margin-bottom: 12px;
-      text-align: center; /* Центрируем заголовки полей */
+      text-align: center;
     }
     
     .field input[type="text"],
@@ -164,7 +178,7 @@
       font-family: inherit; font-size: 1rem;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
-      text-align: left; /* Текст ввода остается слева для удобства чтения */
+      text-align: left;
     }
     
     body.rtl .field input[type="text"],
@@ -196,7 +210,7 @@
     /* ── ВЫБОР РОЛИ (КАРТОЧКИ) ── */
     .role-grid {
       display: grid; 
-      grid-template-columns: 1fr 1fr; /* ЖЕСТКАЯ ФИКСАЦИЯ В 2 КОЛОНКИ */
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
     
@@ -337,7 +351,6 @@
     /* ── АДАПТАЦИЯ ДЛЯ УЗКИХ ЭКРАНОВ ── */
     @media (max-width: 400px) {
       .panel { padding: 24px 16px; }
-      /* Уменьшаем отступы в карточках ролей, чтобы они точно влезали в 1 ряд */
       .role-card { padding: 14px 6px 12px; }
       .role-card .icon { font-size: 1.6rem; margin-bottom: 6px; }
       .role-card .role-name { font-size: 0.9rem; }
@@ -360,6 +373,8 @@
       <span class="logo-sub">Network</span>
     </div>
     <p class="tagline" id="tagline">Платформа взаимовыгодных рекомендаций.<br><strong>Здесь выигрывают все!</strong></p>
+    
+    <a href="about.html" id="aboutLink" class="btn-outline">Как это работает?</a>
   </header>
 
   <section class="panel">
@@ -459,7 +474,9 @@
         </button>
       </div>
 
-  </section><div class="qr-section">
+  </section>
+  
+  <div class="qr-section">
     <div class="qr-section-title" id="qrTitle">Показать рядом стоящему</div>
     <div class="qr-card">
       <div id="qrcode"></div>
@@ -472,19 +489,25 @@
     <div id="footerSub" class="footer-note">Бесплатно для агентов • Эффективно для бизнеса</div>
   </footer>
 
-</main><script>
+</main>
+
+<script>
 (function() {
   "use strict";
 
   // ── Параметры из URL ──────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   const senderId = params.get("ref") || params.get("sender") || "";
+  
+  // Берем язык из URL, если он есть
+  let initialLang = params.get("lang");
 
   // ── Тексты ───────────────────────────────────────────────────────
   const T = {
     ru: {
       dir: "ltr", lang: "ru",
       tagline: "Платформа взаимовыгодных рекомендаций.<br><strong>Здесь выигрывают все!</strong>",
+      aboutLink: "Как это работает?",
       nameLabel: "Ваше имя или название бизнеса",
       namePh: "Введите имя...",
       roleLabel: "Присоединиться как:",
@@ -509,6 +532,7 @@
     en: {
       dir: "ltr", lang: "en",
       tagline: "Mutual recommendation platform.<br><strong>Everyone wins here!</strong>",
+      aboutLink: "How it works?",
       nameLabel: "Your name or business name",
       namePh: "Enter name...",
       roleLabel: "Join as:",
@@ -533,6 +557,7 @@
     he: {
       dir: "rtl", lang: "he",
       tagline: "פלטפורמת המלצות הדדיות.<br><strong>כאן כולם מרוויחים!</strong>",
+      aboutLink: "איך זה עובד?",
       nameLabel: "שמך או שם העסק",
       namePh: "הכניסו שם...",
       roleLabel: "הצטרפו כ:",
@@ -557,6 +582,7 @@
     ar: {
       dir: "rtl", lang: "ar",
       tagline: "منصة التوصيات المتبادلة.<br><strong>هنا الجميع يربح!</strong>",
+      aboutLink: "كيف يعمل؟",
       nameLabel: "اسمك أو اسم العمل",
       namePh: "أدخل الاسم...",
       roleLabel: "انضم كـ:",
@@ -582,9 +608,10 @@
 
   // ── Языки ─────────────────────────────────────────────────────────
   let currentLang = "ru";
-  let selectedRole = null; // вынесено выше, чтобы использовать в applyLang
+  let selectedRole = null;
 
   function detectLang() {
+    if (initialLang && T[initialLang]) return initialLang;
     const n = navigator.language || "";
     if (n.startsWith("he") || n.startsWith("iw")) return "he";
     if (n.startsWith("ar")) return "ar";
@@ -600,6 +627,12 @@
     document.body.dir = t.dir;
 
     document.getElementById("tagline").innerHTML = t.tagline;
+    
+    // Обновляем текст и ссылку кнопки "Как это работает?"
+    const aboutLink = document.getElementById("aboutLink");
+    aboutLink.textContent = t.aboutLink;
+    aboutLink.href = "about.html?lang=" + lang;
+
     document.getElementById("nameLabel").textContent = t.nameLabel;
     document.getElementById("nameInput").placeholder = t.namePh;
     document.getElementById("roleLabel").textContent = t.roleLabel;
@@ -615,7 +648,6 @@
     document.getElementById("rGift").textContent = t.rGift;
     document.getElementById("rewardValue").placeholder = t.rewardPh;
     
-    // Динамический заголовок оплаты
     document.getElementById("payLabel").textContent = selectedRole === "business" ? t.payLabelBiz : t.payLabelAgent;
     
     document.getElementById("payTransfer").textContent = t.payTransfer;
@@ -646,11 +678,9 @@
       document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
       radio.closest(".role-card").classList.add("selected");
 
-      // Обновляем текст лейбла оплаты при смене роли
       const t = T[currentLang] || T.ru;
       document.getElementById("payLabel").textContent = selectedRole === "business" ? t.payLabelBiz : t.payLabelAgent;
 
-      // Показываем нужные поля
       document.getElementById("bizFields").classList.toggle("open", selectedRole === "business");
       document.getElementById("commonFields").classList.add("open");
 
@@ -677,7 +707,7 @@
       const rType = document.querySelector('input[name="rewardType"]:checked');
       const rVal  = document.getElementById("rewardValue").value.trim();
       if (!niche || !rType) return false;
-      if (rType.value !== "gift" && !rVal) return false; // для подарка текст не обязателен если gift
+      if (rType.value !== "gift" && !rVal) return false; 
     }
 
     const pay = document.querySelector('input[name="payMethod"]:checked');
@@ -690,7 +720,6 @@
     const ok = isValid();
     document.getElementById("btnWa").disabled = !ok;
     document.getElementById("btnTg").disabled = !ok;
-    if (ok) updateLinks();
   }
 
   // ── Ссылки ────────────────────────────────────────────────────────
@@ -744,7 +773,6 @@
         const waText = "reg_" + respData.temp_key;
         const tgStart = "reg_" + respData.temp_key;
 
-        // Подсказка перед редиректом
         const hints = {
           ru: "Добрый день! Вы завершаете регистрацию в Win-Win Network. Нажмите отправить 👉",
           en: "Good day! You are completing your registration in Win-Win Network. Please tap Send 👉",
@@ -767,15 +795,11 @@
     }
   }
 
-  function updateLinks() {}
-
   document.getElementById("btnWa").addEventListener("click", () => handleChannelClick("wa"));
   document.getElementById("btnTg").addEventListener("click", () => handleChannelClick("tg"));
 
-  // ── Слушатели для валидации ───────────────────────────────────────
   document.getElementById("nameInput").addEventListener("input", validate);
   document.getElementById("nicheSelect").addEventListener("change", validate);
-  // Event delegation -- fixes payMethod inside expandable blocks
   document.addEventListener("change", function(e) {
     if (e.target.name === "payMethod") validate();
     if (e.target.name === "rewardType") {
@@ -784,10 +808,9 @@
     }
   });
 
-  // ── QR код ───────────────────────────────────────────────────────
-  const qrUrl = senderId
-    ? window.location.origin + window.location.pathname + "?ref=" + encodeURIComponent(senderId)
-    : window.location.origin + window.location.pathname;
+  // ── QR код (ЖЕСТКО ФИКСИРОВАН НА ДОМЕН) ─────────────────────────
+  const baseUrl = "https://winwinnetwork.pro/";
+  const qrUrl = senderId ? baseUrl + "?ref=" + encodeURIComponent(senderId) : baseUrl;
 
   new QRCode(document.getElementById("qrcode"), {
     text: qrUrl,
