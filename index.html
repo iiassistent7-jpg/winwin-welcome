@@ -261,18 +261,27 @@
     <div class="expandable" id="bizFields">
       <div class="field">
         <label id="nicheLabel">Категория бизнеса</label>
-        <select id="nicheSelect">
+        <select id="nicheSelect" onchange="updateIndexSubcategories()">
           <option value="" disabled selected id="nicheDefault">Выберите категорию...</option>
           <option value="Красота и эстетика">Красота и эстетика</option>
-          <option value="Недвижимость и финансы">Недвижимость и финансы</option>
+          <option value="Еда и рестораны">Еда и рестораны</option>
+          <option value="Магазины и товары">Магазины и товары</option>
           <option value="Здоровье и медицина">Здоровье и медицина</option>
-          <option value="Автомобили">Автомобили</option>
-          <option value="Дом и ремонт">Дом и ремонт</option>
-          <option value="Праздники и мероприятия">Праздники и мероприятия</option>
           <option value="Юриспруденция">Юриспруденция</option>
+          <option value="Недвижимость и финансы">Недвижимость и финансы</option>
+          <option value="Дом и ремонт">Дом и ремонт</option>
+          <option value="Автомобили">Автомобили</option>
+          <option value="Праздники и мероприятия">Праздники и мероприятия</option>
           <option value="Обучение и спорт">Обучение и спорт</option>
-          <option value="Бизнес и услуги">Бизнес и услуги</option>
+          <option value="Домашние питомцы">Домашние питомцы</option>
+          <option value="Туризм и отдых">Туризм и отдых</option>
+          <option value="Бизнес и B2B услуги">Бизнес и B2B услуги</option>
         </select>
+      </div>
+      <div class="field" id="indexSubcatField" style="display:none;">
+        <label>Специализация <span style="font-size:0.75rem;opacity:0.6;">(можно выбрать несколько)</span></label>
+        <div id="indexSubcatList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
+        <input type="hidden" id="nicheSubSelect">
       </div>
 
       <div class="field">
@@ -570,7 +579,8 @@
 
   function buildPayload() {
     const name    = document.getElementById("nameInput").value.trim();
-    const niche   = document.getElementById("nicheSelect").value;
+    const _nicheSubVal = document.getElementById('nicheSubSelect') ? document.getElementById('nicheSubSelect').value : '';
+    const niche   = _nicheSubVal || document.getElementById("nicheSelect").value;
     const rType   = document.querySelector('input[name="rewardType"]:checked');
     const rVal    = document.getElementById("rewardValue").value.trim();
     const pay     = document.querySelector('input[name="payMethod"]:checked');
@@ -668,6 +678,49 @@
   applyLang(detectLang());
 
 })();
+
+  const INDEX_SUBCATEGORIES = {
+    "Красота и эстетика": ["Косметология","Инъекционная косметология","Лазерная эпиляция","Эпиляция","Перманентный макияж","Удаление тату и татуажа","Стилисты по волосам и барберы","Ногтевой сервис","Брови и ресницы","Макияж","SPA и релакс-массаж"],
+    "Еда и рестораны": ["Рестораны и кафе","Доставка еды и рационы","Авторская выпечка и десерты","Бары и пабы","Кейтеринг и банкеты"],
+    "Магазины и товары": ["Одежда, обувь и аксессуары","Мебель и товары для дома","Ювелирные изделия","Цветы и подарки","Косметика и парфюмерия"],
+    "Здоровье и медицина": ["Стоматология","Психология и психотерапия","Физиотерапия и остеопатия","Диетология и нутрициология","Альтернативная медицина","Лечебный массаж","Оптика и зрение"],
+    "Юриспруденция": ["Коммерческое право (для бизнеса)","Недвижимость","Семейное право","Иммиграция и визы","Уголовное право","Травмы и Битуах Леуми","Нотариусы и переводы"],
+    "Недвижимость и финансы": ["Недвижимость (купля/продажа/аренда)","Ипотека и рефинансирование","Бухгалтерия и налоги","Страхование (все виды)"],
+    "Дом и ремонт": ["Ремонт под ключ","Электрика","Сантехника","Кондиционеры","Клининг и химчистка","Дизайн интерьера","Сборка и ремонт мебели"],
+    "Автомобили": ["Ремонт и СТО","Детейлинг и мойка","Автоподбор и продажа","Аренда авто"],
+    "Праздники и мероприятия": ["Фото и видеосъемка","Ведущие и музыканты","Организация мероприятий","Декораторы"],
+    "Обучение и спорт": ["Фитнес и тренеры","Репетиторы и курсы","Языковые школы","Детские кружки и секции"],
+    "Домашние питомцы": ["Ветеринария","Груминг","Зоомагазины","Передержка и выгул"],
+    "Туризм и отдых": ["Турагентства","Отели и апартаменты","Гиды и экскурсии"],
+    "Бизнес и B2B услуги": ["Маркетинг и SMM","Разработка сайтов и ПО","Дизайн и брендинг","Консалтинг и коучинг","Логистика и доставка"]
+  };
+
+  function updateIndexSubcategories() {
+    const cat = document.getElementById('nicheSelect').value;
+    const field = document.getElementById('indexSubcatField');
+    const list = document.getElementById('indexSubcatList');
+    const hidden = document.getElementById('nicheSubSelect');
+    const subs = INDEX_SUBCATEGORIES[cat] || [];
+    list.innerHTML = '';
+    hidden.value = '';
+    subs.forEach(s => {
+      const item = document.createElement('label');
+      item.className = 'idx-cb-item';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.value = s;
+      cb.addEventListener('change', () => {
+        item.classList.toggle('checked', cb.checked);
+        const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
+        hidden.value = checked.join(', ');
+      });
+      const span = document.createElement('span');
+      span.textContent = s;
+      item.appendChild(cb); item.appendChild(span);
+      list.appendChild(item);
+    });
+    field.style.display = subs.length > 0 ? 'block' : 'none';
+  }
+
 </script>
 </body>
 </html>
