@@ -170,7 +170,7 @@
     }
     .role-card .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
     .role-card .role-name { font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 4px; line-height: 1.2; }
-    .role-card .role-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
+    .role-card .role-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; padding: 0 4px; }
 
     .seg-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .seg {
@@ -247,13 +247,13 @@
           <input type="radio" name="role" value="business">
           <span class="icon">🏢</span>
           <span class="role-name" id="roleBizName">Владелец бизнеса</span>
-          <span class="role-desc" id="roleBizDesc">Хочу больше клиентов</span>
+          <span class="role-desc" id="roleBizDesc">Хочу увеличить базу клиентов</span>
         </label>
         <label class="role-card" id="cardAgent">
           <input type="radio" name="role" value="agent">
           <span class="icon">🤝</span>
           <span class="role-name" id="roleAgentName">Довольный клиент</span>
-          <span class="role-desc" id="roleAgentDesc">Хочу рекомендовать и делать добро</span>
+          <span class="role-desc" id="roleAgentDesc">Хочу рекомендовать</span>
         </label>
       </div>
     </div>
@@ -338,7 +338,7 @@
 
   <footer class="footer">
     <div>Win-Win Network © 2025</div>
-    <div id="footerSub" class="footer-note">Бесплатно для агентов • Эффективно для бизнеса</div>
+    <div id="footerSub" class="footer-note">Бесплатно для рекомендателей • Эффективно для бизнеса</div>
   </footer>
 
 </main>
@@ -360,8 +360,8 @@
       nameLabel: "Ваше имя или название бизнеса",
       namePh: "Введите имя...",
       roleLabel: "Присоединиться как:",
-      roleBizName: "Владелец бизнеса", roleBizDesc: "Хочу больше клиентов",
-      roleAgentName: "Довольный клиент", roleAgentDesc: "Хочу рекомендовать и делать добро",
+      roleBizName: "Владелец бизнеса", roleBizDesc: "Хочу увеличить базу клиентов",
+      roleAgentName: "Довольный клиент", roleAgentDesc: "Хочу рекомендовать",
       nicheLabel: "Категория бизнеса", nicheDefault: "Выберите категорию...",
       rewardLabel: "Бонус за рекомендацию",
       rPct: "% от сделки", rFix: "Фикс ₪", rGift: "Подарок/Услуга",
@@ -385,8 +385,8 @@
       nameLabel: "Your name or business name",
       namePh: "Enter name...",
       roleLabel: "Join as:",
-      roleBizName: "Business Owner", roleBizDesc: "I want more clients",
-      roleAgentName: "Happy Client", roleAgentDesc: "I want to recommend and do good",
+      roleBizName: "Business Owner", roleBizDesc: "I want to grow my client base",
+      roleAgentName: "Happy Client", roleAgentDesc: "I want to recommend",
       nicheLabel: "Business Category", nicheDefault: "Select category...",
       rewardLabel: "Recommendation Bonus",
       rPct: "% of deal", rFix: "Fixed ₪", rGift: "Gift/Service",
@@ -410,8 +410,8 @@
       nameLabel: "שמך או שם העסק",
       namePh: "הכניסו שם...",
       roleLabel: "הצטרפו כ:",
-      roleBizName: "בעל עסק", roleBizDesc: "רוצה יותר לקוחות",
-      roleAgentName: "לקוח מרוצה", roleAgentDesc: "רוצה להמליץ ולעשות טוב",
+      roleBizName: "בעל עסק", roleBizDesc: "רוצה להגדיל את מאגר הלקוחות",
+      roleAgentName: "לקוח מרוצה", roleAgentDesc: "רוצה להמליץ",
       nicheLabel: "קטגוריית עסק", nicheDefault: "בחרו קטגוריה...",
       rewardLabel: "הטבה על המלצה",
       rPct: "% מהעסקה", rFix: "סכום קבוע ₪", rGift: "מתנה/שירות",
@@ -435,8 +435,8 @@
       nameLabel: "اسمك أو اسم العمل",
       namePh: "أدخل الاسم...",
       roleLabel: "انضم كـ:",
-      roleBizName: "صاحب العمل", roleBizDesc: "أريد المزيد من العملاء",
-      roleAgentName: "عميل راضٍ", roleAgentDesc: "أريد التوصية وعمل الخير",
+      roleBizName: "صاحب العمل", roleBizDesc: "أريد زيادة قاعدة العملاء",
+      roleAgentName: "عميل راضٍ", roleAgentDesc: "أريد التوصية",
       nicheLabel: "فئة العمل", nicheDefault: "اختر فئة...",
       rewardLabel: "مكافأة التوصية",
       rPct: "% من الصفقة", rFix: "مبلغ ثابت ₪", rGift: "هدية/خدمة",
