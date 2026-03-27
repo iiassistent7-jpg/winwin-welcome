@@ -185,7 +185,7 @@
     }
 
     .expandable { max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease-out), opacity 0.3s; opacity: 0; }
-    .expandable.open { max-height: 600px; opacity: 1; overflow: visible; margin-top: 16px; }
+    .expandable.open { max-height: 2000px; opacity: 1; overflow: visible; margin-top: 16px; }
     .reward-value-wrap { margin-top: 10px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.3s; opacity: 0; }
     .reward-value-wrap.open { max-height: 80px; opacity: 1; overflow: visible; }
 
@@ -212,6 +212,10 @@
 
     .footer { text-align: center; margin-top: 24px; font-size: 0.75rem; color: var(--text-muted); }
     .footer-note { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; }
+    .idx-cb-item { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 14px; cursor:pointer; transition:0.2s; }
+    .idx-cb-item.checked { background:rgba(86,204,242,0.08); border-color:rgba(86,204,242,0.4); }
+    .idx-cb-item input[type=checkbox] { width:18px; height:18px; accent-color:#56CCF2; flex-shrink:0; }
+    .idx-cb-item span { font-size:0.9rem; font-weight:600; color:#e0e0e0; }
   </style>
 </head>
 <body>
