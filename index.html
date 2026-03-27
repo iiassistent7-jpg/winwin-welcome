@@ -711,7 +711,7 @@
     hidden.value = '';
     tags.innerHTML = '';
     tags.style.display = 'none';
-    if (doneBtn) doneBtn.style.display = 'none';
+    if (doneBtn) doneBtn.style.display = 'block';
     if (editBtn) editBtn.style.display = 'none';
     subs.forEach(s => {
       const item = document.createElement('label');
@@ -722,7 +722,7 @@
         item.classList.toggle('checked', cb.checked);
         const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
         hidden.value = checked.join(', ');
-        if (doneBtn) doneBtn.style.display = checked.length > 0 ? 'block' : 'none';
+        // кнопка всегда видима
       });
       const span = document.createElement('span');
       span.textContent = s;
