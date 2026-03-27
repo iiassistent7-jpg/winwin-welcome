@@ -280,7 +280,10 @@
       </div>
       <div class="field" id="indexSubcatField" style="display:none;">
         <label>Специализация <span style="font-size:0.75rem;opacity:0.6;">(можно выбрать несколько)</span></label>
+        <div id="indexSubcatTags" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
         <div id="indexSubcatList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
+        <button type="button" id="indexSubcatDone" onclick="confirmIndexSubcat()" style="display:none;width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(86,204,242,0.3),rgba(47,128,237,0.3));border:1px solid rgba(86,204,242,0.5);color:#fff;font-weight:700;font-size:0.95rem;border-radius:12px;cursor:pointer;">✅ Подтвердить выбор</button>
+        <button type="button" id="indexSubcatEdit" onclick="editIndexSubcat()" style="display:none;width:100%;margin-top:6px;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text-muted,#a0a0b0);font-size:0.85rem;border-radius:10px;cursor:pointer;">✏️ Изменить</button>
         <input type="hidden" id="nicheSubSelect">
       </div>
 
@@ -700,9 +703,16 @@
     const field = document.getElementById('indexSubcatField');
     const list = document.getElementById('indexSubcatList');
     const hidden = document.getElementById('nicheSubSelect');
+    const tags = document.getElementById('indexSubcatTags');
+    const doneBtn = document.getElementById('indexSubcatDone');
+    const editBtn = document.getElementById('indexSubcatEdit');
     const subs = INDEX_SUBCATEGORIES[cat] || [];
     list.innerHTML = '';
     hidden.value = '';
+    tags.innerHTML = '';
+    tags.style.display = 'none';
+    if (doneBtn) doneBtn.style.display = 'none';
+    if (editBtn) editBtn.style.display = 'none';
     subs.forEach(s => {
       const item = document.createElement('label');
       item.className = 'idx-cb-item';
@@ -712,6 +722,7 @@
         item.classList.toggle('checked', cb.checked);
         const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
         hidden.value = checked.join(', ');
+        if (doneBtn) doneBtn.style.display = checked.length > 0 ? 'block' : 'none';
       });
       const span = document.createElement('span');
       span.textContent = s;
@@ -719,6 +730,38 @@
       list.appendChild(item);
     });
     field.style.display = subs.length > 0 ? 'block' : 'none';
+    list.style.display = 'flex';
+  }
+
+  function confirmIndexSubcat() {
+    const list = document.getElementById('indexSubcatList');
+    const tags = document.getElementById('indexSubcatTags');
+    const doneBtn = document.getElementById('indexSubcatDone');
+    const editBtn = document.getElementById('indexSubcatEdit');
+    const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
+    if (checked.length === 0) return;
+    // Показываем теги
+    tags.innerHTML = checked.map(s =>
+      `<span style="display:inline-block;background:rgba(86,204,242,0.15);border:1px solid rgba(86,204,242,0.4);color:#56CCF2;border-radius:20px;padding:4px 12px;font-size:0.85rem;font-weight:600;">${s}</span>`
+    ).join('');
+    tags.style.display = 'flex';
+    list.style.display = 'none';
+    doneBtn.style.display = 'none';
+    editBtn.style.display = 'block';
+  }
+
+  function editIndexSubcat() {
+    const list = document.getElementById('indexSubcatList');
+    const tags = document.getElementById('indexSubcatTags');
+    const doneBtn = document.getElementById('indexSubcatDone');
+    const editBtn = document.getElementById('indexSubcatEdit');
+    const hidden = document.getElementById('nicheSubSelect');
+    tags.style.display = 'none';
+    list.style.display = 'flex';
+    editBtn.style.display = 'none';
+    const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
+    doneBtn.style.display = checked.length > 0 ? 'block' : 'none';
+    hidden.value = checked.join(', ');
   }
 
 </script>
