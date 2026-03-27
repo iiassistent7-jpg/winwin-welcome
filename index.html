@@ -584,6 +584,7 @@
     const name    = document.getElementById("nameInput").value.trim();
     const _nicheSubVal = document.getElementById('nicheSubSelect') ? document.getElementById('nicheSubSelect').value : '';
     const niche   = _nicheSubVal || document.getElementById("nicheSelect").value;
+    const category = document.getElementById("nicheSelect").value;
     const rType   = document.querySelector('input[name="rewardType"]:checked');
     const rVal    = document.getElementById("rewardValue").value.trim();
     const pay     = document.querySelector('input[name="payMethod"]:checked');
@@ -600,6 +601,7 @@
       role: selectedRole,
       name: name,
       niche: niche || null,
+      category: category || null,
       commission: commission,
       pay_pref: pay ? pay.value : null,
       business_info: social || null,
@@ -738,9 +740,10 @@
     const tags = document.getElementById('indexSubcatTags');
     const doneBtn = document.getElementById('indexSubcatDone');
     const editBtn = document.getElementById('indexSubcatEdit');
+    const hidden = document.getElementById('nicheSubSelect');
     const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
     if (checked.length === 0) return;
-    // Показываем теги
+    hidden.value = checked.join(', ');  // ← главный фикс
     tags.innerHTML = checked.map(s =>
       `<span style="display:inline-block;background:rgba(86,204,242,0.15);border:1px solid rgba(86,204,242,0.4);color:#56CCF2;border-radius:20px;padding:4px 12px;font-size:0.85rem;font-weight:600;">${s}</span>`
     ).join('');
