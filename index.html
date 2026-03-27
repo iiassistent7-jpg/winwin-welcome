@@ -45,7 +45,7 @@
       animation: bgShift 15s ease infinite;
       display: flex;
       justify-content: center;
-      padding: 24px 20px 60px;
+      padding: 16px 16px 40px;
     }
 
     body.rtl { direction: rtl; }
@@ -56,7 +56,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* ── ГЛАВНЫЙ КОНТЕЙНЕР (ГЛАССМОРФИЗМ) ── */
     .shell {
       width: 100%;
       max-width: var(--max-width);
@@ -74,7 +73,7 @@
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
       border-radius: 28px;
-      padding: 32px 22px 28px;
+      padding: 24px 20px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -93,269 +92,126 @@
       pointer-events: none;
     }
 
-    /* ── ШАПКА ── */
-    .header { text-align: center; margin-bottom: 28px; }
+    .header { text-align: center; margin-bottom: 20px; }
 
-    .lang-bar {
-      display: flex; justify-content: center; gap: 8px; margin-bottom: 24px;
-    }
+    .lang-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
     
     .lang-btn {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 999px;
-      color: var(--text-muted);
-      font-family: inherit; font-size: 0.8rem; font-weight: 600;
-      padding: 6px 14px; cursor: pointer;
-      transition: all 0.18s;
+      background: var(--card); border: 1px solid var(--card-border); border-radius: 999px;
+      color: var(--text-muted); font-family: inherit; font-size: 0.75rem; font-weight: 600;
+      padding: 6px 12px; cursor: pointer; transition: all 0.18s;
     }
     
     .lang-btn:hover, .lang-btn.active {
       background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(0,212,170,0.1));
-      border-color: rgba(108,99,255,0.5);
-      color: var(--text-main);
+      border-color: rgba(108,99,255,0.5); color: var(--text-main);
     }
 
-    .logo-wrap { margin-bottom: 6px; }
+    .logo-wrap { margin-bottom: 4px; }
     .logo {
-      font-size: clamp(2.2rem, 8vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
+      font-size: clamp(2.2rem, 8vw, 2.6rem); font-weight: 800; letter-spacing: -0.04em;
       background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
       -webkit-background-clip: text; background-clip: text; color: transparent;
-      line-height: 1;
-      margin: 0;
+      line-height: 1; margin: 0;
     }
     .logo-sub {
-      font-size: 0.75rem; font-weight: 700;
-      letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--text-muted); display: block; margin-top: 6px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--text-muted); display: block; margin-top: 4px;
     }
     
-    .tagline {
-      margin-top: 16px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;
-    }
+    .tagline { margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
     .tagline strong { 
-      font-weight: 800;
-      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      display: inline-block;
-      margin-top: 2px;
+      font-weight: 800; background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;
     }
 
-    /* ── КНОПКА "КАК ЭТО РАБОТАЕТ?" ── */
     .btn-outline {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 24px; margin-top: 16px;
-      background: transparent; color: var(--text-muted);
-      text-decoration: none; font-size: 0.9rem; font-weight: 600;
+      padding: 10px 24px; margin-top: 12px; background: transparent; color: var(--text-muted);
+      text-decoration: none; font-size: 0.85rem; font-weight: 600;
       border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);
       transition: all 0.3s var(--ease-out); cursor: pointer;
     }
-    .btn-outline:hover {
-      background: rgba(255,255,255,0.05); border-color: #fff; color: #fff;
-      transform: translateY(-2px);
-    }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: #fff; color: #fff; transform: translateY(-2px); }
 
-    /* ── ПОЛЯ ── */
-    .field { margin-bottom: 24px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center; }
     
-    .field label {
-      display: block; font-size: 0.85rem; font-weight: 600;
-      color: var(--text-muted); margin-bottom: 12px;
-      text-align: center;
-    }
-    
-    .field input[type="text"],
-    .field input[type="url"],
-    .field select {
-      width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      color: var(--text-main);
-      padding: 14px 16px;
-      font-family: inherit; font-size: 1rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      text-align: left;
+    .field input[type="text"], .field input[type="url"], .field select {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+      border-radius: 14px; color: var(--text-main); padding: 12px 16px; font-family: inherit; font-size: 1rem;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s; text-align: left;
     }
     
-    body.rtl .field input[type="text"],
-    body.rtl .field input[type="url"],
-    body.rtl .field select {
-      text-align: right;
-    }
+    body.rtl .field input[type="text"], body.rtl .field input[type="url"], body.rtl .field select { text-align: right; }
     
-    .field input:focus, .field select:focus {
-      border-color: var(--accent-1);
-      box-shadow: 0 0 0 3px rgba(108,99,255,0.18);
-    }
-    .field input.error {
-      border-color: var(--error);
-      box-shadow: 0 0 0 3px rgba(255,85,102,0.15);
-    }
+    .field input:focus, .field select:focus { border-color: var(--accent-1); box-shadow: 0 0 0 3px rgba(108,99,255,0.18); }
+    .field input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(255,85,102,0.15); }
     .field input::placeholder { color: var(--text-muted); opacity: 0.6; }
 
-    /* Ниша — dropdown */
     .field select {
       appearance: none; cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
+      background-repeat: no-repeat; background-position: right 16px center;
     }
     body.rtl .field select { background-position: left 16px center; }
     .field select option { background: var(--bg-2); color: #fff; }
 
-    /* ── ВЫБОР РОЛИ (КАРТОЧКИ) ── */
-    .role-grid {
-      display: grid; 
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .role-card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 18px 12px 16px;
-      cursor: pointer; text-align: center;
-      transition: all 0.2s var(--ease-out);
-      user-select: none;
+      background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+      padding: 14px 8px; cursor: pointer; text-align: center; transition: all 0.2s var(--ease-out); user-select: none;
     }
-    
     .role-card input { display: none; }
-    
-    .role-card:hover {
-      border-color: rgba(108,99,255,0.3);
-      background: rgba(255,255,255,0.06);
-    }
-    
+    .role-card:hover { border-color: rgba(108,99,255,0.3); background: rgba(255,255,255,0.06); }
     .role-card.selected {
       background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(0,212,170,0.05));
-      border-color: var(--accent-1);
-      box-shadow: 0 0 0 2px rgba(108,99,255,0.2);
+      border-color: var(--accent-1); box-shadow: 0 0 0 2px rgba(108,99,255,0.2);
     }
-    
-    .role-card .icon { font-size: 2rem; display: block; margin-bottom: 8px; }
-    .role-card .role-name {
-      font-size: 1rem; font-weight: 700; color: var(--text-main);
-      display: block; margin-bottom: 4px;
-    }
-    .role-card .role-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; }
+    .role-card .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .role-card .role-name { font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 4px; line-height: 1.2; }
+    .role-card .role-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
 
-    /* ── СЕГМЕНТЫ (способ оплаты, вознаграждение) ── */
     .seg-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    
     .seg {
-      flex: 1; min-width: 80px; text-align: center;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 12px 6px;
-      font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
+      flex: 1; min-width: 80px; text-align: center; background: var(--card); border: 1px solid var(--card-border);
+      border-radius: 12px; padding: 10px 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
       cursor: pointer; transition: all 0.18s; user-select: none;
     }
-    
     .seg input { display: none; }
-    
     .seg:has(input:checked) {
       background: linear-gradient(135deg, rgba(108,99,255,0.25), rgba(0,212,170,0.1));
-      border-color: rgba(108,99,255,0.5);
-      color: var(--text-main);
+      border-color: rgba(108,99,255,0.5); color: var(--text-main);
     }
 
-    /* ── БЛОКИ, КОТОРЫЕ ПОЯВЛЯЮТСЯ ── */
-    .expandable {
-      max-height: 0; overflow: hidden;
-      transition: max-height 0.4s var(--ease-out), opacity 0.3s;
-      opacity: 0;
-    }
-    .expandable.open { max-height: 600px; opacity: 1; overflow: visible; }
-
-    .reward-value-wrap {
-      margin-top: 10px; max-height: 0; overflow: hidden;
-      transition: max-height 0.3s ease, opacity 0.3s; opacity: 0;
-    }
+    .expandable { max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease-out), opacity 0.3s; opacity: 0; }
+    .expandable.open { max-height: 600px; opacity: 1; overflow: visible; margin-top: 16px; }
+    .reward-value-wrap { margin-top: 10px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.3s; opacity: 0; }
     .reward-value-wrap.open { max-height: 80px; opacity: 1; overflow: visible; }
 
-    /* ── РАЗДЕЛИТЕЛЬ ── */
-    .divider { height: 1px; background: var(--card-border); margin: 24px 0; }
+    .divider { height: 1px; background: var(--card-border); margin: 16px 0; }
 
-    /* ── КНОПКИ КАНАЛОВ ── */
-    .channel-title {
-      text-align: center; font-size: 0.85rem; font-weight: 600; 
-      color: var(--text-muted); margin-bottom: 16px;
-    }
-    
-    .channel-btns { display: flex; flex-direction: column; gap: 12px; }
-    
+    .channel-title { text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; }
+    .channel-btns { display: flex; flex-direction: column; gap: 10px; }
     .btn-wa, .btn-tg {
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      width: 100%; padding: 16px;
-      border: none; border-radius: 999px;
-      color: #fff; font-family: inherit; font-size: 1rem; font-weight: 700;
-      cursor: pointer; text-decoration: none;
-      transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 14px;
+      border: none; border-radius: 999px; color: #fff; font-family: inherit; font-size: 1rem; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
     }
-    
-    .btn-wa {
-      background: linear-gradient(135deg, #22c55e, var(--wa));
-      box-shadow: 0 8px 24px rgba(37,211,102,0.2);
-    }
-    
-    .btn-tg {
-      background: linear-gradient(135deg, #149adf, var(--tg));
-      box-shadow: 0 8px 24px rgba(42,171,238,0.2);
-    }
-    
-    .btn-wa:hover:not(:disabled), .btn-tg:hover:not(:disabled) {
-      transform: scale(1.02); filter: brightness(1.05);
-    }
-    
-    .btn-wa:disabled, .btn-tg:disabled {
-      opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none;
-      filter: grayscale(0.6);
-    }
+    .btn-wa { background: linear-gradient(135deg, #22c55e, var(--wa)); box-shadow: 0 8px 24px rgba(37,211,102,0.2); }
+    .btn-tg { background: linear-gradient(135deg, #149adf, var(--tg)); box-shadow: 0 8px 24px rgba(42,171,238,0.2); }
+    .btn-wa:hover:not(:disabled), .btn-tg:hover:not(:disabled) { transform: scale(1.02); filter: brightness(1.05); }
+    .btn-wa:disabled, .btn-tg:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(0.6); }
 
-    /* ── QR СЕКЦИЯ ── */
-    .qr-section { margin-top: 40px; text-align: center; }
-    
-    .qr-section-title {
-      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
-      letter-spacing: 0.05em; text-transform: uppercase;
-      margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
-    }
-    
-    .qr-section-title::before, .qr-section-title::after {
-      content: ""; flex: 1; height: 1px; background: var(--card-border);
-    }
-    
-    .qr-card {
-      display: inline-block; background: #fff;
-      border-radius: 20px; padding: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 2px rgba(108,99,255,0.2);
-    }
-    
+    .qr-section { margin-top: 32px; text-align: center; }
+    .qr-section-title { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+    .qr-section-title::before, .qr-section-title::after { content: ""; flex: 1; height: 1px; background: var(--card-border); }
+    .qr-card { display: inline-block; background: #fff; border-radius: 20px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 2px rgba(108,99,255,0.2); }
     #qrcode canvas, #qrcode img { display: block; border-radius: 8px; }
-    
-    .qr-hint { margin-top: 14px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .qr-hint { margin-top: 12px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
 
-    /* ── ФУТЕР ── */
-    .footer {
-      text-align: center; margin-top: 32px;
-      font-size: 0.8rem; color: var(--text-muted);
-    }
-    .footer-note { font-size: 0.72rem; opacity: 0.8; margin-top: 4px; }
-
-    /* ── АДАПТАЦИЯ ДЛЯ УЗКИХ ЭКРАНОВ ── */
-    @media (max-width: 400px) {
-      .panel { padding: 24px 16px; }
-      .role-card { padding: 14px 6px 12px; }
-      .role-card .icon { font-size: 1.6rem; margin-bottom: 6px; }
-      .role-card .role-name { font-size: 0.9rem; }
-      .role-card .role-desc { font-size: 0.65rem; line-height: 1.2; }
-    }
+    .footer { text-align: center; margin-top: 24px; font-size: 0.75rem; color: var(--text-muted); }
+    .footer-note { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -384,19 +240,19 @@
       <input type="text" id="nameInput" placeholder="Введите имя..." autocomplete="off" />
     </div>
 
-    <div class="field">
+    <div class="field" style="margin-bottom: 0;">
       <label id="roleLabel">Присоединиться как:</label>
       <div class="role-grid">
         <label class="role-card" id="cardBusiness">
           <input type="radio" name="role" value="business">
           <span class="icon">🏢</span>
-          <span class="role-name" id="roleBizName">Бизнес</span>
+          <span class="role-name" id="roleBizName">Владелец бизнеса</span>
           <span class="role-desc" id="roleBizDesc">Хочу больше клиентов</span>
         </label>
         <label class="role-card" id="cardAgent">
           <input type="radio" name="role" value="agent">
           <span class="icon">🤝</span>
-          <span class="role-name" id="roleAgentName">Агент</span>
+          <span class="role-name" id="roleAgentName">Довольный клиент</span>
           <span class="role-desc" id="roleAgentDesc">Хочу рекомендовать и делать добро</span>
         </label>
       </div>
@@ -404,31 +260,27 @@
 
     <div class="expandable" id="bizFields">
       <div class="field">
-        <label id="nicheLabel">Ниша бизнеса</label>
+        <label id="nicheLabel">Категория бизнеса</label>
         <select id="nicheSelect">
-          <option value="" disabled selected id="nicheDefault">Выберите нишу...</option>
-          <option value="💅 Красота и уход">💅 Красота и уход</option>
-          <option value="🏠 Недвижимость">🏠 Недвижимость</option>
-          <option value="🏥 Здоровье">🏥 Здоровье</option>
-          <option value="🍕 Еда и рестораны">🍕 Еда и рестораны</option>
-          <option value="⚖️ Юристы">⚖️ Юристы</option>
-          <option value="💰 Финансы">💰 Финансы</option>
-          <option value="🔧 Ремонт и стройка">🔧 Ремонт и стройка</option>
-          <option value="💻 IT">💻 IT</option>
-          <option value="🐾 Животные">🐾 Животные</option>
-          <option value="👗 Одежда и товары">👗 Одежда и товары</option>
-          <option value="🎓 Обучение">🎓 Обучение</option>
-          <option value="🚗 Авто">🚗 Авто</option>
-          <option value="📦 Другое">📦 Другое</option>
+          <option value="" disabled selected id="nicheDefault">Выберите категорию...</option>
+          <option value="Красота и эстетика">Красота и эстетика</option>
+          <option value="Недвижимость и финансы">Недвижимость и финансы</option>
+          <option value="Здоровье и медицина">Здоровье и медицина</option>
+          <option value="Автомобили">Автомобили</option>
+          <option value="Дом и ремонт">Дом и ремонт</option>
+          <option value="Праздники и мероприятия">Праздники и мероприятия</option>
+          <option value="Юриспруденция">Юриспруденция</option>
+          <option value="Обучение и спорт">Обучение и спорт</option>
+          <option value="Бизнес и услуги">Бизнес и услуги</option>
         </select>
       </div>
 
       <div class="field">
-        <label id="rewardLabel">Вознаграждение агенту за клиента</label>
+        <label id="rewardLabel">Бонус за рекомендацию</label>
         <div class="seg-group">
           <label class="seg"><input type="radio" name="rewardType" value="pct"><span id="rPct">% от сделки</span></label>
           <label class="seg"><input type="radio" name="rewardType" value="fix"><span id="rFix">Фикс ₪</span></label>
-          <label class="seg"><input type="radio" name="rewardType" value="gift"><span id="rGift">Подарок</span></label>
+          <label class="seg"><input type="radio" name="rewardType" value="gift"><span id="rGift">Подарок/Услуга</span></label>
         </div>
         <div class="reward-value-wrap" id="rewardValueWrap">
           <input type="text" id="rewardValue" style="margin-top:0" placeholder="Укажите размер..." />
@@ -440,7 +292,7 @@
 
     <div class="expandable" id="commonFields">
       <div class="field">
-        <label id="payLabel">Выберите способ получения благодарности</label>
+        <label id="payLabel">Как вы предпочитаете получить бонус?</label>
         <div class="seg-group">
           <label class="seg"><input type="radio" name="payMethod" value="bit">Bit</label>
           <label class="seg"><input type="radio" name="payMethod" value="paypal">PayPal</label>
@@ -449,7 +301,7 @@
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" style="margin-bottom: 0;">
         <label id="socialLabel">Ссылка на сайт / соцсеть <span style="color:var(--text-muted);font-weight:400">(необязательно)</span></label>
         <input type="url" id="socialInput" placeholder="Instagram, Facebook, сайт..." />
       </div>
@@ -495,14 +347,11 @@
 (function() {
   "use strict";
 
-  // ── Параметры из URL ──────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   const senderId = params.get("ref") || params.get("sender") || "";
-  
-  // Берем язык из URL, если он есть
   let initialLang = params.get("lang");
 
-  // ── Тексты ───────────────────────────────────────────────────────
+  // Тексты с новыми, дружелюбными формулировками
   const T = {
     ru: {
       dir: "ltr", lang: "ru",
@@ -511,14 +360,14 @@
       nameLabel: "Ваше имя или название бизнеса",
       namePh: "Введите имя...",
       roleLabel: "Присоединиться как:",
-      roleBizName: "Бизнес", roleBizDesc: "Хочу больше клиентов",
-      roleAgentName: "Агент", roleAgentDesc: "Хочу рекомендовать и делать добро",
-      nicheLabel: "Ниша бизнеса", nicheDefault: "Выберите нишу...",
-      rewardLabel: "Вознаграждение агенту за клиента",
-      rPct: "% от сделки", rFix: "Фикс ₪", rGift: "Подарок",
+      roleBizName: "Владелец бизнеса", roleBizDesc: "Хочу больше клиентов",
+      roleAgentName: "Довольный клиент", roleAgentDesc: "Хочу рекомендовать и делать добро",
+      nicheLabel: "Категория бизнеса", nicheDefault: "Выберите категорию...",
+      rewardLabel: "Бонус за рекомендацию",
+      rPct: "% от сделки", rFix: "Фикс ₪", rGift: "Подарок/Услуга",
       rewardPh: "Укажите размер...",
-      payLabelAgent: "Выберите способ получения благодарности",
-      payLabelBiz: "Выберите способ выплаты благодарности",
+      payLabelAgent: "Как вы предпочитаете получить бонус?",
+      payLabelBiz: "Способ выплаты бонуса",
       payTransfer: "Перевод", payCash: "Наличные",
       socialLabel: "Ссылка на сайт / соцсеть",
       socialPh: "Instagram, Facebook, сайт...",
@@ -527,7 +376,7 @@
       tgLabel: "Присоединиться через Telegram",
       qrTitle: "Показать рядом стоящему",
       qrHint: "Пусть сканирует — попадёт на эту же страницу",
-      footerSub: "Бесплатно для агентов • Эффективно для бизнеса",
+      footerSub: "Бесплатно для рекомендателей • Эффективно для бизнеса",
     },
     en: {
       dir: "ltr", lang: "en",
@@ -536,14 +385,14 @@
       nameLabel: "Your name or business name",
       namePh: "Enter name...",
       roleLabel: "Join as:",
-      roleBizName: "Business", roleBizDesc: "I want more clients",
-      roleAgentName: "Agent", roleAgentDesc: "I want to recommend and do good",
-      nicheLabel: "Business niche", nicheDefault: "Select niche...",
-      rewardLabel: "Agent reward per client",
-      rPct: "% of deal", rFix: "Fixed ₪", rGift: "Gift",
+      roleBizName: "Business Owner", roleBizDesc: "I want more clients",
+      roleAgentName: "Happy Client", roleAgentDesc: "I want to recommend and do good",
+      nicheLabel: "Business Category", nicheDefault: "Select category...",
+      rewardLabel: "Recommendation Bonus",
+      rPct: "% of deal", rFix: "Fixed ₪", rGift: "Gift/Service",
       rewardPh: "Enter amount...",
-      payLabelAgent: "Choose how to receive your bonus",
-      payLabelBiz: "Choose how to pay the bonus",
+      payLabelAgent: "How do you prefer to receive the bonus?",
+      payLabelBiz: "How to pay the bonus",
       payTransfer: "Transfer", payCash: "Cash",
       socialLabel: "Website / social link",
       socialPh: "Instagram, Facebook, website...",
@@ -552,7 +401,7 @@
       tgLabel: "Join via Telegram",
       qrTitle: "Show to someone nearby",
       qrHint: "They scan it — land on this page",
-      footerSub: "Free for agents • Effective for business",
+      footerSub: "Free for referrers • Effective for business",
     },
     he: {
       dir: "rtl", lang: "he",
@@ -561,14 +410,14 @@
       nameLabel: "שמך או שם העסק",
       namePh: "הכניסו שם...",
       roleLabel: "הצטרפו כ:",
-      roleBizName: "עסק", roleBizDesc: "רוצה יותר לקוחות",
-      roleAgentName: "סוכן", roleAgentDesc: "רוצה להמליץ ולעשות טוב",
-      nicheLabel: "תחום העסק", nicheDefault: "בחרו תחום...",
-      rewardLabel: "גמול לסוכן עבור לקוח",
-      rPct: "% מהעסקה", rFix: "סכום קבוע ₪", rGift: "מתנה",
+      roleBizName: "בעל עסק", roleBizDesc: "רוצה יותר לקוחות",
+      roleAgentName: "לקוח מרוצה", roleAgentDesc: "רוצה להמליץ ולעשות טוב",
+      nicheLabel: "קטגוריית עסק", nicheDefault: "בחרו קטגוריה...",
+      rewardLabel: "הטבה על המלצה",
+      rPct: "% מהעסקה", rFix: "סכום קבוע ₪", rGift: "מתנה/שירות",
       rewardPh: "הכניסו גודל...",
-      payLabelAgent: "בחרו אופן קבלת תגמול",
-      payLabelBiz: "בחרו אופן תשלום תגמול",
+      payLabelAgent: "איך תרצו לקבל את ההטבה?",
+      payLabelBiz: "איך תעדיפו לשלם את ההטבה?",
       payTransfer: "העברה", payCash: "מזומן",
       socialLabel: "קישור לאתר / רשת חברתית",
       socialPh: "Instagram, Facebook, אתר...",
@@ -577,7 +426,7 @@
       tgLabel: "הצטרפות דרך Telegram",
       qrTitle: "הראה לאדם לידך",
       qrHint: "יסרוק — יגיע לדף הזה",
-      footerSub: "חינם לסוכנים • יעיל לעסקים",
+      footerSub: "חינם לממליצים • יעיל לעסקים",
     },
     ar: {
       dir: "rtl", lang: "ar",
@@ -586,14 +435,14 @@
       nameLabel: "اسمك أو اسم العمل",
       namePh: "أدخل الاسم...",
       roleLabel: "انضم كـ:",
-      roleBizName: "شركة", roleBizDesc: "أريد المزيد من العملاء",
-      roleAgentName: "وكيل", roleAgentDesc: "أريد التوصية وعمل الخير",
-      nicheLabel: "مجال العمل", nicheDefault: "اختر المجال...",
-      rewardLabel: "مكافأة الوكيل لكل عميل",
-      rPct: "% من الصفقة", rFix: "مبلغ ثابت ₪", rGift: "هدية",
+      roleBizName: "صاحب العمل", roleBizDesc: "أريد المزيد من العملاء",
+      roleAgentName: "عميل راضٍ", roleAgentDesc: "أريد التوصية وعمل الخير",
+      nicheLabel: "فئة العمل", nicheDefault: "اختر فئة...",
+      rewardLabel: "مكافأة التوصية",
+      rPct: "% من الصفقة", rFix: "مبلغ ثابت ₪", rGift: "هدية/خدمة",
       rewardPh: "أدخل المبلغ...",
-      payLabelAgent: "اختر طريقة استلام المكافأة",
-      payLabelBiz: "اختر طريقة دفع المكافأة",
+      payLabelAgent: "كيف تفضل استلام المكافأة؟",
+      payLabelBiz: "كيف تفضل دفع المكافأة؟",
       payTransfer: "تحويل", payCash: "نقداً",
       socialLabel: "رابط الموقع / الشبكة الاجتماعية",
       socialPh: "Instagram, Facebook, موقع...",
@@ -602,11 +451,10 @@
       tgLabel: "الانضمام عبر Telegram",
       qrTitle: "أرِ الشخص المجاور",
       qrHint: "يمسح — يصل لهذه الصفحة",
-      footerSub: "مجاني للوكلاء • فعّال للأعمال",
+      footerSub: "مجاني للموصين • فعّال للأعمال",
     },
   };
 
-  // ── Языки ─────────────────────────────────────────────────────────
   let currentLang = "ru";
   let selectedRole = null;
 
@@ -627,8 +475,6 @@
     document.body.dir = t.dir;
 
     document.getElementById("tagline").innerHTML = t.tagline;
-    
-    // Обновляем текст и ссылку кнопки "Как это работает?"
     const aboutLink = document.getElementById("aboutLink");
     aboutLink.textContent = t.aboutLink;
     aboutLink.href = "about.html?lang=" + lang;
@@ -670,25 +516,26 @@
     b.addEventListener("click", () => applyLang(b.dataset.lang));
   });
 
-  // ── Роль ─────────────────────────────────────────────────────────
   document.querySelectorAll('input[name="role"]').forEach(radio => {
     radio.addEventListener("change", () => {
       selectedRole = radio.value;
-
       document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
       radio.closest(".role-card").classList.add("selected");
 
       const t = T[currentLang] || T.ru;
       document.getElementById("payLabel").textContent = selectedRole === "business" ? t.payLabelBiz : t.payLabelAgent;
 
-      document.getElementById("bizFields").classList.toggle("open", selectedRole === "business");
+      if (selectedRole === "business") {
+        document.getElementById("bizFields").classList.add("open");
+      } else {
+        document.getElementById("bizFields").classList.remove("open");
+      }
       document.getElementById("commonFields").classList.add("open");
 
       validate();
     });
   });
 
-  // ── Вознаграждение ────────────────────────────────────────────────
   document.querySelectorAll('input[name="rewardType"]').forEach(r => {
     r.addEventListener("change", () => {
       document.getElementById("rewardValueWrap").classList.add("open");
@@ -697,7 +544,6 @@
   });
   document.getElementById("rewardValue").addEventListener("input", validate);
 
-  // ── Валидация ─────────────────────────────────────────────────────
   function isValid() {
     const name = document.getElementById("nameInput").value.trim();
     if (!name || !selectedRole) return false;
@@ -722,7 +568,6 @@
     document.getElementById("btnTg").disabled = !ok;
   }
 
-  // ── Ссылки ────────────────────────────────────────────────────────
   function buildPayload() {
     const name    = document.getElementById("nameInput").value.trim();
     const niche   = document.getElementById("nicheSelect").value;
@@ -808,7 +653,6 @@
     }
   });
 
-  // ── QR код (ЖЕСТКО ФИКСИРОВАН НА ДОМЕН) ─────────────────────────
   const baseUrl = "https://winwinnetwork.pro/";
   const qrUrl = senderId ? baseUrl + "?ref=" + encodeURIComponent(senderId) : baseUrl;
 
@@ -816,12 +660,11 @@
     text: qrUrl,
     width: 200,
     height: 200,
-    colorDark: "#080810",
+    colorDark: "#0a0a0f",
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H,
   });
 
-  // ── Инициализация ─────────────────────────────────────────────────
   applyLang(detectLang());
 
 })();
