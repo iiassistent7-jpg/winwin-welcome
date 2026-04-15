@@ -22,6 +22,7 @@
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Inter", sans-serif; }
+    html { overflow-x: hidden; }
     body { background: var(--bg-1); color: #fff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
     
     [dir="rtl"] { text-align: right; }
@@ -140,9 +141,8 @@
     .steps-section h2 { text-align: center; font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 900; letter-spacing: -1px; margin-bottom: 24px; color: var(--accent-1); }
     .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
     .step-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; }
-    .step-num { font-size: 2.5rem; font-weight: 900; color: var(--accent-1); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+    .step-num { font-size: 2.5rem; font-weight: 900; color: var(--accent-1); line-height: 1; margin-bottom: 8px; }
     .step-text { color: #e0e0e0; font-size: 0.95rem; line-height: 1.6; }
-
     /* FAQ */
     .faq-section { margin-bottom: 48px; }
     .faq-section h2 { text-align: center; font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 900; letter-spacing: -1px; margin-bottom: 24px; color: var(--accent-1); }
@@ -155,11 +155,10 @@
     .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
     .faq-item.open .faq-a { max-height: 500px; }
     .faq-a-inner { padding: 0 20px 18px 20px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; }
-
     /* Back button */
-    .back-btn-wrap { text-align: center; padding: 16px 0 0 0; }
-    .back-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--card-border); border-radius: 999px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; padding: 10px 24px; cursor: pointer; text-decoration: none; transition: 0.2s; }
-    .back-btn:hover { color: #fff; border-color: rgba(255,255,255,0.15); }
+    .back-btn-wrap { text-align: center; padding: 16px 0 0 0; display: flex; justify-content: center; }
+    .back-btn { display: inline-flex; align-items: center; justify-content: center; padding: 16px 40px; border-radius: 999px; border: none; cursor: pointer; background: linear-gradient(135deg, #6c63ff, #00d4aa); color: #fff; font-size: 1.1rem; font-weight: 700; box-shadow: 0 10px 30px rgba(108,99,255,0.3); text-decoration: none; transition: 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; }
+    .back-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 40px rgba(108,99,255,0.5); }
 
     @media (max-width: 768px) {
       .container { padding: 0 16px; }
@@ -343,7 +342,7 @@
       <h2 id="t_cta_title">Станьте частью экосистемы</h2>
       <a href="https://winwinnetwork.pro/" class="btn-main" id="t_btn_join">Присоединиться к Win-Win</a>
       <div class="back-btn-wrap" id="backBtnWrap" style="display:none;">
-        <a href="javascript:history.back()" class="back-btn" id="t_btn_back">← Назад</a>
+        <a href="javascript:history.back()" class="back-btn" id="t_btn_back">← Вернуться</a>
       </div>
     </section>
 
@@ -509,7 +508,7 @@
           { q: "What if the business doesn't pay the bonus?", a: "The platform doesn't hold the money, but it records the deal and whether the payout happened. If a business repeatedly fails to pay, that affects its standing inside Win-Win. It can't quietly do this without leaving a trace." },
           { q: "Does the platform take a commission from the agent?", a: "No. The platform is free for recommenders. You receive the reward directly from the business, with no deduction by Win-Win." },
           { q: "What if the client never shows up?", a: "Then there is no bonus, because no real deal happened. Win-Win only counts completed deals with actual payment. That keeps the system fair for both sides." },
-          { q: "How do I log in to my account?", a: "Usually you enter through your personal link via WhatsApp or Telegram, without a long signup or extra passwords. If the link has expired, request a new one through the messenger. Vince — the AI assistant — is available 24/7 if anything is unclear." },
+          { q: "How do I log in to my account?", a: "Usually you enter through your personal link via WhatsApp or Telegram, without a long signup or extra passwords. If the link has expired, request a new one through the messenger. Vince — the AI assistant — is available 24/7." },
           { q: "Is this legal in Israel?", a: "In general, yes — as long as everything is transparent: a real client, a real deal, and a clearly defined reward. Taxes and profession-specific rules still apply, so in sensitive cases check with an accountant or lawyer." }
         ]
       },
@@ -606,13 +605,13 @@
         excl_title: "هذا المكان ليس للجميع",
         excl_text: "<p>تم إنشاء المنصة حصريًا لأصحاب المنتجات أو الخدمات العالية الجودة.</p><p>إذا كان عملك 10/10، سيرغب العملاء في التوصية بك.</p><p>علّمهم القيام بذلك هنا، وسيفعلون ذلك بكل سرور.</p><p>لا مكان للرداءة هنا.</p>",
         role_agent_t: "عميل راضٍ (موصي)",
-        role_agent_d: "<p>تعرف خبيراً؟</p><p>أرسل رابطاً أو اعرض رمز QR.</p><p>عند إتمام الصفقة، سيكافئك صاحب العمل.</p><p>يمكنك أخذ المكافأة، <span class='role-highlight'>أو إهداؤها كخصم لصديق</span>، أو التنازل <span class='role-highlight'>لدعم الشركة</span>.</p><p>إنها قصة مساعدة متبادلة.</p>",
+        role_agent_d: "<p>تعرف خبيراً؟</p><p>أرسل رابطاً أو اعرض رمز QR.</p><p>عند إتمام الصفقة، سيكافئك صاحب العمل.</p><p>يمكنك أخذ المكافأة، <span class='role-highlight'>أو إهداؤها كخصم لصديق</span>، أو التنازل <span class='role-highlight'>لدعم العمل</span>.</p><p>إنها قصة مساعدة متبادلة.</p>",
         role_biz_t: "صاحب العمل",
         role_biz_d: "<p>أكمل إعلاناتك بأقوى أداة — التسويق الشفهي الرقمي والشفاف.</p><p>يصبح عملاؤك سفراء لك في Win-Win.</p><p>تقدم مكافأة أو هدية <span class='role-highlight'>فقط عند إغلاق الصفقة بنجاح</span>، وتحدد أنت قيمتها.</p>",
         role_client_t: "العميل (الضيف)",
         role_client_d: "<p>لا مزيد من التخمين.</p><p>تدخل الشركات في كتالوجنا <span class='role-highlight'>فقط إذا أوصى بها أشخاص حقيقيون</span>.</p><p>القدوم من صديق يمنحك غالباً معاملة VIP ومكافآت.</p>",
         trust_title: "نحن لا نلمس أموالك",
-        trust_text: "<p>المنصة لا تمرر أموالك من خلالها.</p><p>تتم جميع المدفوعات والمكافآت مباشرة بين الشركة والعميل والموصي.</p><p>مهمتنا تزويدك بأداة مريحة لتتبع التوصيات. وضمانتنا هي الرقابة الصارمة.</p><p>من يخادع شريكه يفقد الوصول إلى الكتالوج للأبد.</p>",
+        trust_text: "<p>المنصة لا تمرر أموالك من خلالها.</p><p>تتم جميع المدفوعات والمكافآت مباشرة بين العمل والعميل والموصي.</p><p>مهمتنا تزويدك بأداة مريحة لتتبع التوصيات. وضمانتنا هي الرقابة الصارمة.</p><p>من يخادع شريكه يفقد الوصول إلى الكتالوج للأبد.</p>",
         f1_title: "تصنيف الأعمال الذكي",
         f1_desc: "<p>التصنيف مبني على الحقائق: الصفقات المغلقة.</p><p>توصيات أكثر = صفقات أكثر.</p><p>مما يجعل الشركة أكثر موثوقية وجاذبية لتوصيات جديدة.</p>",
         f2_title: "قاعة المشاهير",
@@ -749,14 +748,12 @@
       document.getElementById('t_btn_join').textContent = L.btn_join;
       document.getElementById('t_btn_join').href = "https://winwinnetwork.pro/?lang=" + lang;
 
-      // Steps
       document.getElementById('t_steps_title').textContent = L.steps_title;
       document.getElementById('t_step1').textContent = L.step1;
       document.getElementById('t_step2').textContent = L.step2;
       document.getElementById('t_step3').textContent = L.step3;
       document.getElementById('t_step4').textContent = L.step4;
 
-      // FAQ
       document.getElementById('t_faq_title').textContent = L.faq_title;
       const faqList = document.getElementById('faqList');
       faqList.innerHTML = L.faq.map((item, i) => `
@@ -768,12 +765,16 @@
           <div class="faq-a"><div class="faq-a-inner">${item.a}</div></div>
         </div>`).join('');
 
-      // Back button
       const backWrap = document.getElementById('backBtnWrap');
       const backBtn = document.getElementById('t_btn_back');
+      const joinBtn = document.getElementById('t_btn_join');
+      const joinTitle = document.getElementById('t_cta_title');
       if (backBtn) backBtn.textContent = L.btn_back;
       const urlP = new URLSearchParams(window.location.search);
-      if (backWrap) backWrap.style.display = urlP.get('back') === '1' ? 'block' : 'none';
+      const isBack = urlP.get('back') === '1';
+      if (backWrap) backWrap.style.display = isBack ? 'block' : 'none';
+      if (joinBtn) joinBtn.style.display = isBack ? 'none' : '';
+      if (joinTitle) joinTitle.style.display = isBack ? 'none' : '';
     }
     
     // Парсим URL и устанавливаем нужный язык (по умолчанию русский)
@@ -790,5 +791,6 @@
         setLang(lang);
     };
   </script>
+  <script src="about_patch.js"></script>
 </body>
 </html>
