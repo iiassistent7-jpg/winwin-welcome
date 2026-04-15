@@ -128,14 +128,11 @@
       -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;
     }
 
-    .btn-outline {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 24px; margin-top: 12px; background: transparent; color: var(--text-muted);
-      text-decoration: none; font-size: 0.85rem; font-weight: 600;
-      border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);
-      transition: all 0.3s var(--ease-out); cursor: pointer;
-    }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: #fff; color: #fff; transform: translateY(-2px); }
+    @property --a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    @keyframes spin-border-how { to { --a: 360deg; } }
+    .btn-how-outer { display: inline-block; border-radius: 999px; padding: 1.5px; margin-top: 12px; background: conic-gradient(from var(--a), rgba(108,99,255,0.15) 0%, rgba(108,99,255,0.15) 40%, #6c63ff 50%, #00d4aa 57%, rgba(108,99,255,0.15) 67%, rgba(108,99,255,0.15) 100%); animation: spin-border-how 2.5s linear infinite; }
+    .btn-outline { display: inline-flex; align-items: center; justify-content: center; padding: 10px 24px; background: #13112e; color: #9d99ff; text-decoration: none; font-size: 0.85rem; font-weight: 600; border-radius: 999px; border: none; cursor: pointer; white-space: nowrap; }
+    .btn-outline:hover { background: #1a1840; color: #b8b5ff; }
 
     .field { margin-bottom: 16px; }
     .field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center; }
@@ -237,7 +234,9 @@
     </div>
     <p class="tagline" id="tagline">Платформа взаимовыгодных рекомендаций.<br><strong>Здесь выигрывают все!</strong></p>
     
-    <a href="about.html" id="aboutLink" class="btn-outline">Как это работает?</a>
+    <div class="btn-how-outer">
+      <a href="about.html" id="aboutLink" class="btn-outline">Как это работает?</a>
+    </div>
   </header>
 
   <section class="panel">
