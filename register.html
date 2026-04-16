@@ -363,6 +363,8 @@
 
       const LANG_TEXTS = {
         ru: { 
+          categories: ["Красота и эстетика","Еда и рестораны","Магазины и товары","Здоровье и медицина","Юриспруденция","Недвижимость и финансы","Дом и ремонт","Автомобили","Праздники и мероприятия","Обучение и спорт","Домашние питомцы","Туризм и отдых","Бизнес и B2B услуги"],
+          cat_placeholder: "Выберите категорию...",
           slogan:"Здесь выигрывают все!", title_client:"Оставить контакт", title_other:"Регистрация",
           btn_client:"Отправить контакт", btn_reg:"Зарегистрироваться",
           pre_title:"Выберите удобный мессенджер",
@@ -371,9 +373,20 @@
           niche_label:"Категория бизнеса", reward_label:"Бонус за рекомендацию",
           r_pct:"% от сделки", r_fix:"Фикс ₪", r_gift:"Подарок/Услуга",
           social:"Ссылка на сайт/соцсеть (необязательно)",
-          trans:"Перевод", cash:"Наличные"
+          trans:"Перевод", cash:"Наличные",
+          client_name_label: "Как к Вам обращаться?",
+          client_name_ph: "Введите имя",
+          client_social_label: "Ссылка на соцсеть (необязательно)",
+          client_social_ph: "Instagram, Facebook, сайт...",
+          name_ph: "Введите данные",
+          reward_ph: "Например: 15 (для %) или 200 (для ₪)",
+          social_ph: "Instagram, Facebook, сайт...",
+          niche_sub_label: "Специализация",
+          choice_title: "Выберите мессенджер для продолжения"
         },
         en: { 
+          categories: ["Beauty & Aesthetics","Food & Restaurants","Shops & Goods","Health & Medicine","Legal Services","Real Estate & Finance","Home & Repair","Automotive","Events & Parties","Education & Sports","Pets","Tourism & Leisure","Business & B2B"],
+          cat_placeholder: "Select a category...",
           slogan:"Here everyone wins!", title_client:"Leave contact", title_other:"Registration",
           btn_client:"Send contact", btn_reg:"Register",
           pre_title:"Choose your messenger",
@@ -382,9 +395,20 @@
           niche_label:"Business Category", reward_label:"Recommendation Bonus",
           r_pct:"% of deal", r_fix:"Fixed ₪", r_gift:"Gift/Service",
           social:"Website/social link (optional)",
-          trans:"Transfer", cash:"Cash"
+          trans:"Transfer", cash:"Cash",
+          client_name_label: "What's your name?",
+          client_name_ph: "Enter your name",
+          client_social_label: "Social link (optional)",
+          client_social_ph: "Instagram, Facebook, website...",
+          name_ph: "Enter details",
+          reward_ph: "e.g. 15 (for %) or 200 (for ₪)",
+          social_ph: "Instagram, Facebook, website...",
+          niche_sub_label: "Specialization",
+          choice_title: "Choose your messenger to continue"
         },
         he: { 
+          categories: ["יופי ואסתטיקה","מוכן ומסעדות","חנויות ומוצרים","בריאות ורפואה","משפטים","נדלן ופיננסים","בית ושיפוצים","רכבים","אירועים ומירועים","חינוך וספורט","חיות מחמד","תיירות ונופש","עסקים ושירותי B2B"],
+          cat_placeholder: "בחרו קטגוריה...",
           slogan:"כאן כולם מרוויחים!", title_client:"השאר פרטים", title_other:"הרשמה",
           btn_client:"שלח פרטים", btn_reg:"להירשם",
           pre_title:"בחר מסנג'ר נוח",
@@ -393,9 +417,20 @@
           niche_label:"קטגוריית עסק", reward_label:"הטבה על המלצה",
           r_pct:"% מהעסקה", r_fix:"סכום קבוע ₪", r_gift:"מתנה/שירות",
           social:"קישור לאתר/רשת חברתית",
-          trans:"העברה", cash:"מזומן"
+          trans:"העברה", cash:"מזומן",
+          client_name_label: "מה שמך?",
+          client_name_ph: "הכניסו שם",
+          client_social_label: "קישור לרשת חברתית (לא חובה)",
+          client_social_ph: "Instagram, Facebook, אתר...",
+          name_ph: "הכניסו פרטים",
+          reward_ph: "לדוגמה: 15 (לאחוז) או 200 (לסכום קבוע)",
+          social_ph: "Instagram, Facebook, אתר...",
+          niche_sub_label: "התמחות",
+          choice_title: "בחרו מסנג'ר להמשך"
         },
         ar: { 
+          categories: ["الجمال والتجميل","الطعام والمطاعم","المتاجر والسلع","الصحة والطب","القانون","العقارات والمال","المنزل والإصلاح","السيارات","الفعاليات","التعليم والرياضة","الحيوانات الأليفة","السياحة والترفيه","الأعمال وخدمات B2B"],
+          cat_placeholder: "اختر فئة...",
           slogan:"هنا الجميع يربح!", title_client:"اترك بيانات", title_other:"تسجيل",
           btn_client:"إرسال البيانات", btn_reg:"تسجيل",
           pre_title:"اختر تطبيق المراسلة",
@@ -404,7 +439,16 @@
           niche_label:"فئة العمل", reward_label:"مكافأة التوصية",
           r_pct:"% من الصفقة", r_fix:"مبلغ ثابت ₪", r_gift:"هدية/خدمة",
           social:"رابط الموقع/الشبكة الاجتماعية",
-          trans:"تحويل", cash:"نقداً"
+          trans:"تحويل", cash:"نقداً",
+          client_name_label: "ما اسمك؟",
+          client_name_ph: "أدخل اسمك",
+          client_social_label: "رابط التواصل الاجتماعي (اختياري)",
+          client_social_ph: "Instagram, Facebook, موقع...",
+          name_ph: "أدخل البيانات",
+          reward_ph: "مثال: 15 (للنسبة) أو 200 (للمبلغ الثابت)",
+          social_ph: "Instagram, Facebook, موقع...",
+          niche_sub_label: "التخصص",
+          choice_title: "اختر تطبيق المراسلة للمتابعة"
         },
       };
 
@@ -430,6 +474,33 @@
         
         if (document.getElementById("lblTrans")) document.getElementById("lblTrans").innerHTML = `<input type="radio" name="paymentMethod" value="transfer" data-req="agent,business"> ${T.trans}`;
         if (document.getElementById("lblCash")) document.getElementById("lblCash").innerHTML = `<input type="radio" name="paymentMethod" value="cash" data-req="agent,business"> ${T.cash}`;
+        const catSelect = document.getElementById('category');
+        if (catSelect && T.categories) {
+          const currentVal = catSelect.value;
+          catSelect.innerHTML = `<option value="" disabled selected>${T.cat_placeholder}</option>` +
+            T.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+          catSelect.value = currentVal;
+        }
+        if (document.getElementById('clientNameLabel'))
+          document.getElementById('clientNameLabel').textContent = T.client_name_label;
+        if (document.getElementById('clientName'))
+          document.getElementById('clientName').placeholder = T.client_name_ph;
+        if (document.getElementById('clientSocialLabel'))
+          document.getElementById('clientSocialLabel').textContent = T.client_social_label;
+        if (document.getElementById('clientSocial'))
+          document.getElementById('clientSocial').placeholder = T.client_social_ph;
+        if (document.getElementById('fullName'))
+          document.getElementById('fullName').placeholder = T.name_ph;
+        if (document.getElementById('rewardValue'))
+          document.getElementById('rewardValue').placeholder = T.reward_ph;
+        if (document.getElementById('socialLink'))
+          document.getElementById('socialLink').placeholder = T.social_ph;
+        if (document.getElementById('categoryPlaceholder'))
+          document.getElementById('categoryPlaceholder').textContent = T.cat_placeholder;
+        if (document.getElementById('nicheLabelSub'))
+          document.getElementById('nicheLabelSub').childNodes[0].textContent = T.niche_sub_label + ' ';
+        if (document.getElementById('choiceTitle'))
+          document.getElementById('choiceTitle').textContent = T.choice_title;
 
         document.getElementById("languageHidden").value = lang;
         document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b.dataset.lang===lang));
