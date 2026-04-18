@@ -475,10 +475,14 @@
         if (document.getElementById("lblTrans")) document.getElementById("lblTrans").innerHTML = `<input type="radio" name="paymentMethod" value="transfer" data-req="agent,business"> ${T.trans}`;
         if (document.getElementById("lblCash")) document.getElementById("lblCash").innerHTML = `<input type="radio" name="paymentMethod" value="cash" data-req="agent,business"> ${T.cash}`;
         const catSelect = document.getElementById('category');
-        if (catSelect && T.categories) {
+        if (catSelect && typeof TAXONOMY_LABELS !== 'undefined' && TAXONOMY_LABELS.categories) {
           const currentVal = catSelect.value;
-          catSelect.innerHTML = `<option value="" disabled selected>${T.cat_placeholder}</option>` +
-            T.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+          const placeholder = `<option value="" disabled selected>${T.cat_placeholder}</option>`;
+          const options = Object.entries(TAXONOMY_LABELS.categories).map(([ru, trans]) => {
+            const label = (lang === 'ru') ? ru : (trans[lang] || ru);
+            return `<option value="${ru}">${label}</option>`;
+          }).join('');
+          catSelect.innerHTML = placeholder + options;
           catSelect.value = currentVal;
         }
         if (document.getElementById('clientNameLabel'))
