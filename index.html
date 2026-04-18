@@ -547,11 +547,27 @@
     document.getElementById("nicheLabel").textContent = t.nicheLabel;
     document.getElementById("nicheDefault").textContent = t.nicheDefault;
     const nicheSelEl = document.getElementById('nicheSelect');
-    if (nicheSelEl && t.categories) {
-      const savedVal = nicheSelEl.value;
-      nicheSelEl.innerHTML = '<option value="" disabled selected id="nicheDefault">' + t.nicheDefault + '</option>' +
-        t.categories.map(function(c) { return '<option value="' + c + '">' + c + '</option>'; }).join('');
-      if (savedVal) nicheSelEl.value = savedVal;
+    if (nicheSelEl) {
+      try {
+        // TAXONOMY_LABELS is a const declared OUTSIDE this IIFE. On the first
+        // applyLang() call (executed before the IIFE ends) it's still in TDZ
+        // and any reference to it throws. We silently swallow that error — the
+        // select already has RU options from HTML, and on the next applyLang()
+        // (triggered by language-button click) TAXONOMY_LABELS is initialized
+        // and this block runs normally.
+        if (TAXONOMY_LABELS && TAXONOMY_LABELS.categories) {
+          const savedVal = nicheSelEl.value;
+          const placeholder = '<option value="" disabled selected id="nicheDefault">' + t.nicheDefault + '</option>';
+          const options = Object.entries(TAXONOMY_LABELS.categories).map(function(entry) {
+            const ru = entry[0];
+            const trans = entry[1];
+            const label = (lang === 'ru') ? ru : (trans[lang] || ru);
+            return '<option value="' + ru + '">' + label + '</option>';
+          }).join('');
+          nicheSelEl.innerHTML = placeholder + options;
+          if (savedVal) nicheSelEl.value = savedVal;
+        }
+      } catch (_tdzErr) { /* TAXONOMY_LABELS not ready yet — skip */ }
     }
     // Перерендер подкатегорий на новый язык, если категория выбрана
     if (typeof updateIndexSubcategories === 'function' && document.getElementById('nicheSelect')) {
