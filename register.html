@@ -525,16 +525,27 @@
       const _urlLang = new URLSearchParams(window.location.search).get("lang");
       applyLang((_urlLang && LANG_TEXTS[_urlLang]) ? _urlLang : "ru");
 
-      rewardRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
+      // Показ поля ввода значения вознаграждения — делегирование на контейнере,
+      // чтобы не ломалось после applyLang() (которая пересоздаёт радио через innerHTML).
+      const _rewardGroup = document.getElementById('rewardTypeGroup');
+      if (_rewardGroup) {
+        _rewardGroup.addEventListener('change', (e) => {
+          if (!e.target || e.target.name !== 'rewardType') return;
           rewardValue.classList.remove('hidden');
-          const type = document.querySelector('input[name="rewardType"]:checked')?.value;
-          if (type === 'percent') rewardValue.placeholder = 'Например: 15 (будет 15% от сделки)';
-          else if (type === 'fixed') rewardValue.placeholder = 'Например: 200 (фиксированная сумма ₪)';
-          else if (type === 'gift') rewardValue.placeholder = 'Опишите подарок: Бесплатная консультация';
+          const type = e.target.value;
+          const _rwPh = {
+            ru: { percent: 'Например: 15 (будет 15% от сделки)', fixed: 'Например: 200 (фиксированная сумма ₪)', gift: 'Опишите подарок: Бесплатная консультация' },
+            he: { percent: 'לדוגמה: 15 (יהיה 15% מהעסקה)', fixed: 'לדוגמה: 200 (סכום קבוע ₪)', gift: 'תארו את המתנה: ייעוץ חינם' },
+            en: { percent: 'E.g. 15 (will be 15% of the deal)', fixed: 'E.g. 200 (fixed amount ₪)', gift: 'Describe gift: Free consultation' },
+            ar: { percent: 'مثال: 15 (ستكون 15% من الصفقة)', fixed: 'مثال: 200 (مبلغ ثابت ₪)', gift: 'صف الهدية: استشارة مجانية' },
+          }[document.getElementById("languageHidden")?.value || 'ru'] || {};
+          if (type === 'percent') rewardValue.placeholder = _rwPh.percent || '';
+          else if (type === 'fixed') rewardValue.placeholder = _rwPh.fixed || '';
+          else if (type === 'gift') rewardValue.placeholder = _rwPh.gift || '';
           validateForm();
         });
-      });
+      }
+
 
       const getRequiredElements = () => {
         const reqEls = [];
