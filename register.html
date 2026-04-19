@@ -576,6 +576,10 @@
         });
         const chosenType = form.querySelector('input[name="rewardType"]:checked');
         if (chosenType && chosenType.value !== 'gift' && !rewardValue.value.trim()) isValid = false;
+        if (role === 'business') {
+          const nicheVal = document.getElementById('niche');
+          if (!nicheVal || !nicheVal.value.trim()) isValid = false;
+        }
         return isValid;
       };
 
@@ -625,6 +629,8 @@
         form.querySelectorAll('select').forEach(el => {
           if (el.name) payload[el.name] = el.value;
         });
+        const nicheEl = document.getElementById('niche');
+        if (nicheEl && nicheEl.value) payload.niche = nicheEl.value;
         ['rewardType', 'paymentMethod', 'messenger'].forEach(name => {
           const checked = form.querySelector(`input[name="${name}"]:checked`);
           if (checked) payload[name] = checked.value;
