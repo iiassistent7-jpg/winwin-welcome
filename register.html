@@ -245,7 +245,9 @@
         
         <div class="form-group role-client hidden">
           <label id="clientNameLabel" style="display: block; text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px; letter-spacing: -0.02em;">Как к Вам обращаться?</label>
-          <input type="text" id="clientName" name="clientName" placeholder="Введите имя" data-req="client" style="text-align: center; font-size: 1.1rem; padding: 16px; margin-bottom: 24px;">
+          <input type="text" id="clientName" name="clientName" placeholder="Введите имя" data-req="client" style="text-align: center; font-size: 1.1rem; padding: 16px; margin-bottom: 16px;">
+          <label id="clientPhoneLabel" style="display: block; text-align: center; font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">Ваш номер телефона</label>
+          <input type="tel" id="clientPhone" name="clientPhone" placeholder="+972..." data-req="client" style="text-align: center; font-size: 1.1rem; padding: 16px; margin-bottom: 24px;">
           <div style="text-align: center;">
             <label id="clientSocialLabel" style="display: block; text-align: center; font-weight: 700; font-size: 1rem; color: #ffffff; margin-bottom: 8px;">Ссылка на соцсеть (необязательно)</label>
             <input type="text" id="clientSocial" name="clientSocial" placeholder="Instagram, Facebook, сайт..." style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); color: var(--text-muted); box-shadow: none;">
@@ -376,6 +378,8 @@
           trans:"Перевод", cash:"Наличные",
           client_name_label: "Как к Вам обращаться?",
           client_name_ph: "Введите имя",
+          client_phone_label: "Ваш номер телефона",
+          client_phone_ph: "+972...",
           client_social_label: "Ссылка на соцсеть (необязательно)",
           client_social_ph: "Instagram, Facebook, сайт...",
           name_ph: "Введите данные",
@@ -398,6 +402,8 @@
           trans:"Transfer", cash:"Cash",
           client_name_label: "What's your name?",
           client_name_ph: "Enter your name",
+          client_phone_label: "Your phone number",
+          client_phone_ph: "+972...",
           client_social_label: "Social link (optional)",
           client_social_ph: "Instagram, Facebook, website...",
           name_ph: "Enter details",
@@ -420,6 +426,8 @@
           trans:"העברה", cash:"מזומן",
           client_name_label: "מה שמך?",
           client_name_ph: "הכניסו שם",
+          client_phone_label: "מספר הטלפון שלך",
+          client_phone_ph: "+972...",
           client_social_label: "קישור לרשת חברתית (לא חובה)",
           client_social_ph: "Instagram, Facebook, אתר...",
           name_ph: "הכניסו פרטים",
@@ -442,6 +450,8 @@
           trans:"تحويل", cash:"نقداً",
           client_name_label: "ما اسمك؟",
           client_name_ph: "أدخل اسمك",
+          client_phone_label: "رقم هاتفك",
+          client_phone_ph: "+972...",
           client_social_label: "رابط التواصل الاجتماعي (اختياري)",
           client_social_ph: "Instagram, Facebook, موقع...",
           name_ph: "أدخل البيانات",
@@ -489,6 +499,10 @@
           document.getElementById('clientNameLabel').textContent = T.client_name_label;
         if (document.getElementById('clientName'))
           document.getElementById('clientName').placeholder = T.client_name_ph;
+        if (document.getElementById('clientPhoneLabel'))
+          document.getElementById('clientPhoneLabel').textContent = T.client_phone_label;
+        if (document.getElementById('clientPhone'))
+          document.getElementById('clientPhone').placeholder = T.client_phone_ph;
         if (document.getElementById('clientSocialLabel'))
           document.getElementById('clientSocialLabel').textContent = T.client_social_label;
         if (document.getElementById('clientSocial'))
