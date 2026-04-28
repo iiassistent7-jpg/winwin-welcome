@@ -8,266 +8,3314 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Win-Win Network — Присоединиться</title>
   <meta name="description" content="Платформа взаимовыгодных рекомендаций" />
-  <meta name="theme-color" content="#6c63ff" />
+  <meta name="theme-color" content="#2F66E8" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+  const INDEX_SUBCATEGORIES = {
+    "Красота и эстетика": ["Косметология","Инъекционная косметология","Лазерная эпиляция","Эпиляция","Перманентный макияж","Удаление тату и татуажа","Стилисты по волосам и барберы","Ногтевой сервис","Брови и ресницы","Макияж","SPA и релакс-массаж"],
+    "Еда и рестораны": ["Рестораны и кафе","Доставка еды и рационы","Авторская выпечка и десерты","Бары и пабы","Кейтеринг и банкеты"],
+    "Магазины и товары": ["Одежда, обувь и аксессуары","Мебель и товары для дома","Ювелирные изделия","Цветы и подарки","Косметика и парфюмерия"],
+    "Здоровье и медицина": ["Стоматология","Психология и психотерапия","Физиотерапия и остеопатия","Диетология и нутрициология","Альтернативная медицина","Лечебный массаж","Оптика и зрение"],
+    "Юриспруденция": ["Коммерческое право (для бизнеса)","Недвижимость","Семейное право","Иммиграция и визы","Уголовное право","Травмы и Битуах Леуми","Нотариусы и переводы"],
+    "Недвижимость и финансы": ["Недвижимость (купля/продажа/аренда)","Ипотека и рефинансирование","Бухгалтерия и налоги","Страхование (все виды)"],
+    "Дом и ремонт": ["Ремонт под ключ","Электрика","Сантехника","Кондиционеры","Клининг и химчистка","Дизайн интерьера","Сборка и ремонт мебели"],
+    "Автомобили": ["Ремонт и СТО","Детейлинг и мойка","Автоподбор и продажа","Аренда авто"],
+    "Праздники и мероприятия": ["Фото и видеосъемка","Ведущие и музыканты","Организация мероприятий","Декораторы"],
+    "Обучение и спорт": ["Фитнес и тренеры","Репетиторы и курсы","Языковые школы","Детские кружки и секции"],
+    "Домашние питомцы": ["Ветеринария","Груминг","Зоомагазины","Передержка и выгул"],
+    "Туризм и отдых": ["Турагентства","Отели и апартаменты","Гиды и экскурсии"],
+    "Бизнес и B2B услуги": ["Маркетинг и SMM","Разработка сайтов и ПО","Дизайн и брендинг","Консалтинг и коучинг","Логистика и доставка"]
+  };
 
-  <style>
+  function updateIndexSubcategories() {
+    const rawCat = document.getElementById('nicheSelect').value;
+    const catRu = (typeof resolveCategoryRu === 'function') ? resolveCategoryRu(rawCat) : rawCat;
+    const field = document.getElementById('indexSubcatField');
+    const list = document.getElementById('indexSubcatList');
+    const hidden = document.getElementById('nicheSubSelect');
+    const tags = document.getElementById('indexSubcatTags');
+    const doneBtn = document.getElementById('indexSubcatDone');
+    const editBtn = document.getElementById('indexSubcatEdit');
+    const subs = (typeof TAXONOMY_SOURCE !== 'undefined' ? (TAXONOMY_SOURCE[catRu] || []) : []);
+    const lang = (typeof getCurrentIndexLang === 'function') ? getCurrentIndexLang() : 'ru';
+    list.innerHTML = '';
+    hidden.value = '';
+    tags.innerHTML = '';
+    tags.style.display = 'none';
+    if (doneBtn) doneBtn.style.display = 'block';
+    if (editBtn) editBtn.style.display = 'none';
+    subs.forEach(sRu => {
+      const translated = (typeof translateSubcategory === 'function') ? translateSubcategory(sRu, lang) : sRu;
+      const item = document.createElement('label');
+      item.className = 'idx-cb-item';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.value = translated;
+      cb.dataset.canonical = sRu;
+      cb.addEventListener('change', () => {
+        item.classList.toggle('checked', cb.checked);
+        const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.dataset.canonical || c.value);
+        hidden.value = checked.join(', ');
+      });
+      const span = document.createElement('span');
+      span.textContent = translated;
+      item.appendChild(cb); item.appendChild(span);
+      list.appendChild(item);
+    });
+    field.style.display = subs.length > 0 ? 'block' : 'none';
+    list.style.display = 'flex';
+  }
+
+  function confirmIndexSubcat() {
+    const list = document.getElementById('indexSubcatList');
+    const tags = document.getElementById('indexSubcatTags');
+    const doneBtn = document.getElementById('indexSubcatDone');
+    const editBtn = document.getElementById('indexSubcatEdit');
+    const hidden = document.getElementById('nicheSubSelect');
+    const checkedItems = Array.from(list.querySelectorAll('input:checked'));
+    if (checkedItems.length === 0) return;
+    const checkedCanon = checkedItems.map(c => c.dataset.canonical || c.value);
+    const checkedLabels = checkedItems.map(c => c.value);
+    hidden.value = checkedCanon.join(', ');
+    tags.innerHTML = checkedLabels.map(s =>
+      `<span style="display:inline-block;background:rgba(86,204,242,0.15);border:1px solid rgba(86,204,242,0.4);color:#56CCF2;border-radius:20px;padding:4px 12px;font-size:0.85rem;font-weight:600;">${s}</span>`
+    ).join('');
+    tags.style.display = 'flex';
+    list.style.display = 'none';
+    doneBtn.style.display = 'none';
+    editBtn.style.display = 'block';
+  }
+
+  function editIndexSubcat() {
+    const list = document.getElementById('indexSubcatList');
+    const tags = document.getElementById('indexSubcatTags');
+    const doneBtn = document.getElementById('indexSubcatDone');
+    const editBtn = document.getElementById('indexSubcatEdit');
+    tags.style.display = 'none';
+    list.style.display = 'flex';
+    doneBtn.style.display = 'block';
+    editBtn.style.display = 'none';
+  }
+
+</script>
+
+    <style>
     :root {
-      --bg-1: #0a0a0f;
-      --bg-2: #1a1a2e;
-      --accent-1: #6c63ff;
-      --accent-2: #00d4aa;
-      --text-main: #ffffff;
-      --text-muted: #a0a0b0;
-      --error: #ff5566;
+      --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px;
+      --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px; --s-16: 64px;
+      --s-20: 80px; --s-24: 96px;
+
+      --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px; --r-2xl: 28px;
+      --r-full: 999px;
+
+      --t-caption: 12px; --t-small: 14px; --t-body: 16px; --t-lead: 18px;
+      --t-subhead: 20px; --t-title: 28px; --t-large: 40px; --t-display: 56px;
+
+      --ease: cubic-bezier(0.25, 1, 0.5, 1);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --t-fast: 0.15s; --t-base: 0.28s; --t-slow: 0.6s;
+
+      --accent: #2F66E8;
+      --accent-hover: #4A7CEC;
+      --accent-strong: #1F4FCC;
       --wa: #25D366;
       --tg: #2AABEE;
-      --card: rgba(255, 255, 255, 0.04);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-      --max-width: 500px;
+      --success: #4CB782;
+      --warning: #E9A23B;
+      --danger: #E5484D;
+
+      --bg: #F4F5FB;
+      --bg-elevated: #FFFFFF;
+      --surface: #FFFFFF;
+      --surface-2: #EEF0F8;
+      --surface-hover: #E5E8F2;
+      --border: rgba(15,23,42,0.08);
+      --border-strong: rgba(15,23,42,0.14);
+      --text: #0F172A;
+      --text-2: #475569;
+      --text-3: #94A3B8;
+      --text-on-accent: #FFFFFF;
+      --accent-bg: rgba(47,102,232,0.10);
+      --accent-border: rgba(47,102,232,0.28);
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+      --shadow-md: 0 4px 16px rgba(15,23,42,0.06);
+      --shadow-lg: 0 12px 32px rgba(15,23,42,0.10);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0E0E18;
+        --bg-elevated: #15172A;
+        --surface: #1B1E33;
+        --surface-2: #232744;
+        --surface-hover: #2A2F50;
+        --border: rgba(255,255,255,0.07);
+        --border-strong: rgba(255,255,255,0.12);
+        --text: #ECEDFF;
+        --text-2: #A4A7C9;
+        --text-3: #6F7299;
+        --text-on-accent: #FFFFFF;
+        --accent-bg: rgba(47,102,232,0.14);
+        --accent-border: rgba(47,102,232,0.32);
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+        --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+        --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+      }
+    }
+
+    [data-theme="light"] {
+      --bg: #F4F5FB;
+      --bg-elevated: #FFFFFF;
+      --surface: #FFFFFF;
+      --surface-2: #EEF0F8;
+      --surface-hover: #E5E8F2;
+      --border: rgba(15,23,42,0.08);
+      --border-strong: rgba(15,23,42,0.14);
+      --text: #0F172A;
+      --text-2: #475569;
+      --text-3: #94A3B8;
+      --text-on-accent: #FFFFFF;
+      --accent-bg: rgba(47,102,232,0.10);
+      --accent-border: rgba(47,102,232,0.28);
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+      --shadow-md: 0 4px 16px rgba(15,23,42,0.06);
+      --shadow-lg: 0 12px 32px rgba(15,23,42,0.10);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0E0E18;
+      --bg-elevated: #15172A;
+      --surface: #1B1E33;
+      --surface-2: #232744;
+      --surface-hover: #2A2F50;
+      --border: rgba(255,255,255,0.07);
+      --border-strong: rgba(255,255,255,0.12);
+      --text: #ECEDFF;
+      --text-2: #A4A7C9;
+      --text-3: #6F7299;
+      --text-on-accent: #FFFFFF;
+      --accent-bg: rgba(47,102,232,0.14);
+      --accent-border: rgba(47,102,232,0.32);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
 
     body {
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text-main);
+      margin: 0;
       min-height: 100vh;
-      overflow-x: hidden;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: var(--t-body);
+      line-height: 1.5;
+      color: var(--text);
       background:
-        radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.14), transparent 35%),
-        radial-gradient(circle at 80% 10%, rgba(0, 212, 170, 0.12), transparent 30%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2), #111122, var(--bg-1));
-      background-size: 180% 180%;
-      animation: bgShift 15s ease infinite;
+        radial-gradient(circle at 20% 0%, rgba(47, 102, 232, 0.16), transparent 28%),
+        radial-gradient(circle at 100% 12%, rgba(42, 171, 238, 0.14), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(76, 183, 130, 0.08), transparent 24%),
+        linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 92%, #E8EBF6 8%) 100%);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
+    body.rtl {
+      direction: rtl;
+    }
+
+    img,
+    svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    button,
+    input,
+    select,
+    a {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      background: none;
+      border: 0;
+      color: inherit;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    input,
+    select {
+      min-width: 0;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .num {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+
+    .page-shell {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .page-shell::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent 26%),
+        radial-gradient(circle at 50% 0%, rgba(47,102,232,0.08), transparent 32%);
+      z-index: -1;
+    }
+
+    .container {
+      width: min(100% - 32px, 430px);
+      max-width: 100%;
+      margin-inline: auto;
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3 {
+      overflow-wrap: anywhere;
+      word-break: normal;
+      hyphens: auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding-block: var(--s-4);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .topbar__row {
+      display: flex;
+      align-items: center;
+      gap: var(--s-4);
+      min-height: 56px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      min-width: 44px;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-full);
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-size: var(--t-subhead);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .topbar__nav {
+      display: none;
+      align-items: center;
+      gap: var(--s-6);
+      margin-inline-start: auto;
+    }
+
+    .topbar__nav a {
+      position: relative;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      color: var(--text-2);
+      font-size: var(--t-small);
+      font-weight: 600;
+      transition: color var(--t-base) var(--ease);
+    }
+
+    .topbar__nav a.is-current,
+    .topbar__nav a:hover {
+      color: var(--text);
+    }
+
+    .topbar__nav a.is-current::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 8px;
+      height: 2px;
+      border-radius: var(--r-full);
+      background: var(--accent);
+    }
+
+    .topbar__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      margin-inline-start: auto;
+    }
+
+    .lang-dropdown {
+      position: relative;
+    }
+
+    .lang-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding-inline: 12px;
+      border-radius: var(--r-full);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      font-family: inherit;
+      user-select: none;
+      transition: border-color var(--t-base) var(--ease), background var(--t-base) var(--ease);
+    }
+
+    .lang-trigger:hover {
+      border-color: var(--accent);
+    }
+
+    .lang-trigger__code {
+      font-size: var(--t-small);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .lang-trigger__chevron {
+      width: 16px;
+      height: 16px;
+      color: var(--text-2);
+      transition: transform var(--t-base) var(--ease);
+    }
+
+    .lang-dropdown[data-open="true"] .lang-trigger__chevron {
+      transform: rotate(180deg);
+    }
+
+    .lang-menu[hidden] {
+      display: none !important;
+    }
+
+    .lang-menu {
+      position: fixed;
+      width: min(264px, calc(100vw - 32px));
+      padding: var(--s-3);
+      border-radius: 22px;
+      background: color-mix(in srgb, var(--bg-elevated) 94%, transparent);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      display: grid;
+      gap: 4px;
+      z-index: 9999;
+    }
+
+    .lang-btn.lang-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 52px;
+      padding-inline: 14px;
+      border-radius: 16px;
+      color: var(--text-2);
+      text-align: start;
+      transition: background var(--t-base) var(--ease), color var(--t-base) var(--ease), border-color var(--t-base) var(--ease);
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .lang-btn.lang-option:hover {
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      color: var(--text);
+    }
+
+    .lang-btn.lang-option.active {
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+      color: var(--accent);
+    }
+
+    .lang-option__code {
+      font-size: var(--t-small);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      min-width: 28px;
+    }
+
+    .lang-option__name {
+      font-size: var(--t-body);
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .lang-option__check {
+      width: 18px;
+      height: 18px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity var(--t-base) var(--ease), transform var(--t-base) var(--ease);
+    }
+
+    .lang-btn.lang-option.active .lang-option__check {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .nav-toggle {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--r-full);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 82%, transparent);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-toggle svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .nav-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: grid;
+      align-items: start;
+      padding: 16px;
+      background: rgba(4, 8, 18, 0.42);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity var(--t-base) var(--ease), visibility var(--t-base) var(--ease);
+    }
+
+    .nav-drawer.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .nav-drawer__panel {
+      width: min(100%, 430px);
+      margin-inline-start: auto;
+      padding: 18px;
+      border-radius: 28px;
+      background: color-mix(in srgb, var(--bg-elevated) 96%, transparent);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-12px);
+      transition: transform var(--t-base) var(--ease);
+    }
+
+    .nav-drawer.is-open .nav-drawer__panel {
+      transform: translateY(0);
+    }
+
+    .nav-drawer__head {
+      display: flex;
+      align-items: center;
+      gap: var(--s-4);
+      margin-block-end: var(--s-5);
+    }
+
+    .nav-drawer__close {
+      min-width: 44px;
+      min-height: 44px;
+      margin-inline-start: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--r-full);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 84%, transparent);
+      color: var(--text);
+    }
+
+    .nav-drawer__layout {
+      display: grid;
+      gap: var(--s-5);
+    }
+
+    .nav-drawer__nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-link {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 54px;
+      padding-inline: 16px;
+      border-radius: 18px;
+      font-size: var(--t-body);
+      font-weight: 600;
+      color: var(--text-2);
+      background: transparent;
+      border: 1px solid transparent;
+      transition: background var(--t-base) var(--ease), color var(--t-base) var(--ease), border-color var(--t-base) var(--ease);
+    }
+
+    .nav-link:hover,
+    .nav-link.is-current {
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      border-color: var(--border);
+    }
+
+    .nav-link.is-current {
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+
+    .nav-link__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-drawer__divider {
+      block-size: 1px;
+      background: var(--border);
+      margin-block: 4px;
+    }
+
+    .menu-pill {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, transparent), color-mix(in srgb, var(--bg-elevated) 94%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .menu-pill__icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 35%, rgba(47,102,232,0.28), rgba(47,102,232,0.08));
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    .menu-pill__title {
+      font-size: var(--t-body);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .page {
+      padding-block: var(--s-4) var(--s-16);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .section {
+      padding-block: var(--s-10);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .section-card,
+    .card,
+    .strip-card,
+    .closing-card,
+    .feature-card,
+    .pricing-feature,
+    .trust-card,
+    .tier-card,
+    .role-mini-card,
+    .final-panel {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--bg-elevated) 96%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 34px;
+      padding-inline: 14px;
+      border-radius: var(--r-full);
+      border: 1px solid var(--border-strong);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      color: var(--text-2);
+      font-size: var(--t-small);
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .eyebrow__dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(76,183,130,0.14);
+      flex-shrink: 0;
+    }
+
+    .hero__grid {
+      display: grid;
+      gap: var(--s-8);
+    }
+
+    .hero__content {
+      display: grid;
+      gap: 15px;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .hero__title {
+      margin: 0;
+      font-size: clamp(42px, 11vw, 56px);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+    }
+
+    .hero__title-main,
+    .hero__title-accent {
+      display: block;
+    }
+
+    .hero__title-accent,
+    .accent-text {
+      color: var(--accent);
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--text-2);
+      font-size: var(--t-lead);
+      line-height: 1.55;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-orbit {
       display: flex;
       justify-content: center;
-      padding: 16px 16px 40px;
+      margin-block: var(--s-8) var(--s-6);
+      max-width: 100%;
+      overflow-x: hidden;
+      position: relative;
+      isolation: isolate;
     }
 
-    body.rtl { direction: rtl; }
-
-    @keyframes bgShift {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .shell {
+    .hero-orbit__image {
       width: 100%;
-      max-width: var(--max-width);
-      opacity: 0;
-      transform: translateY(16px);
-      animation: pageIn 0.6s var(--ease-out) forwards;
+      max-width: 360px;
+      height: auto;
+      display: block;
       position: relative;
       z-index: 1;
+      filter: drop-shadow(0 24px 48px rgba(31, 79, 204, 0.16));
     }
 
-    @keyframes pageIn { to { opacity: 1; transform: translateY(0); } }
+    .hero__actions,
+    .final-actions {
+      display: grid;
+      gap: 12px;
+    }
 
-    .panel {
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 54px;
+      padding-inline: 18px;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      font-size: var(--t-body);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      transition:
+        transform var(--t-base) var(--ease),
+        border-color var(--t-base) var(--ease),
+        background var(--t-base) var(--ease),
+        color var(--t-base) var(--ease),
+        box-shadow var(--t-base) var(--ease);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button--primary {
+      color: var(--text-on-accent);
+      background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+      box-shadow: 0 18px 40px rgba(47,102,232,0.28), inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+
+    .button--primary:hover {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent-hover) 92%, white), var(--accent));
+    }
+
+    .button--secondary {
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      border-color: var(--accent-border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .button--secondary:hover {
+      background: color-mix(in srgb, var(--surface-hover) 96%, transparent);
+    }
+
+    .button__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .strip-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 22px;
+      margin-block-start: var(--s-3);
+    }
+
+    .strip-card__icons,
+    .price-strip__icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .messenger-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 10px 22px rgba(0,0,0,0.12);
+    }
+
+    .messenger-badge--wa {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--wa) 86%, white), var(--wa));
+    }
+
+    .messenger-badge--tg {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--tg) 88%, white), var(--tg));
+    }
+
+    .messenger-badge svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .strip-card__title,
+    .feature-card__title,
+    .pricing-feature__title,
+    .trust-card__title,
+    .closing-card__title,
+    .price-strip__title {
+      font-size: var(--t-body);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .strip-card__sub,
+    .feature-card__sub,
+    .pricing-feature__sub,
+    .trust-card__sub,
+    .closing-card__sub,
+    .price-strip__sub,
+    .role-mini-card__sub,
+    .step-card__sub,
+    .pricing-featured__sub {
+      font-size: var(--t-small);
+      line-height: 1.45;
+      color: var(--text-2);
+      margin: 0;
+    }
+
+    .section-header {
+      display: grid;
+      gap: var(--s-3);
+      margin-block-end: var(--s-6);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(34px, 8.6vw, 48px);
+      line-height: 1.12;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+    }
+
+    .section-sub {
+      margin: 0;
+      font-size: var(--t-lead);
+      color: var(--text-2);
+      letter-spacing: -0.02em;
+      line-height: 1.55;
+    }
+
+    .stepper {
+      display: grid;
+      gap: 14px;
       position: relative;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 28px;
-      padding: 24px 20px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      margin-block-end: var(--s-8);
     }
 
-    .panel::before {
-      content: "";
+    .step-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .step-card:not(:last-child)::after {
+      content: '';
       position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(108,99,255,0.4), rgba(0,212,170,0.18), transparent 60%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
+      inset-block-start: 44px;
+      inset-inline-start: 21px;
+      block-size: calc(100% + 14px);
+      inline-size: 2px;
+      background: linear-gradient(180deg, var(--accent-border), transparent);
+      border-radius: var(--r-full);
+    }
+
+    .step-card__index {
+      position: relative;
+      z-index: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: var(--t-body);
+      font-weight: 800;
+      color: var(--text-on-accent);
+      background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+      box-shadow: 0 14px 28px rgba(47,102,232,0.24);
+    }
+
+    .step-card__panel {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 98px;
+      padding: 16px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--bg-elevated) 96%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .step-card__body {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .step-card__title {
+      margin: 0;
+      font-size: var(--t-body);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .step-card__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--surface-2) 94%, transparent);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .step-card__icon--success {
+      color: var(--success);
+      background: rgba(76, 183, 130, 0.14);
+      border-color: rgba(76, 183, 130, 0.26);
+    }
+
+    .triple-grid {
+      display: grid;
+      gap: var(--s-2);
+    }
+
+    .feature-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 22px;
+    }
+
+    .feature-card__icon,
+    .trust-card__icon,
+    .pricing-feature__icon,
+    .closing-card__icon,
+    .pricing-featured__icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .feature-card__icon--blue,
+    .pricing-feature__icon--blue,
+    .trust-card__icon--blue {
+      color: #4E82FF;
+      background: radial-gradient(circle at 50% 35%, rgba(78,130,255,0.20), rgba(78,130,255,0.08));
+    }
+
+    .feature-card__icon--green {
+      color: #34C978;
+      background: radial-gradient(circle at 50% 35%, rgba(52,201,120,0.24), rgba(52,201,120,0.08));
+    }
+
+    .feature-card__icon--purple {
+      color: #8F67E8;
+      background: radial-gradient(circle at 50% 35%, rgba(143,103,232,0.26), rgba(143,103,232,0.08));
+    }
+
+    .feature-card__copy,
+    .trust-card__copy,
+    .pricing-feature__copy {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .feature-card__chevron {
+      width: 18px;
+      height: 18px;
+      color: var(--text-3);
+      flex-shrink: 0;
+    }
+
+    body.rtl .feature-card__chevron {
+      transform: scaleX(-1);
+    }
+
+    .role-mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-3);
+      align-items: stretch;
+      margin-block-start: var(--s-4);
+    }
+
+    .role-mini-card {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border-radius: 20px;
+      text-align: start;
+      min-width: 0;
+      transition: transform var(--t-base) var(--ease), border-color var(--t-base) var(--ease);
+    }
+
+    .role-mini-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent-border);
+    }
+
+    .role-mini-card__head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: var(--t-body);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.025em;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .role-mini-card__icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .trust-panel {
+      display: grid;
+      gap: var(--s-4);
+    }
+
+    .trust-lead {
+      display: grid;
+      gap: 14px;
+      margin-block-end: var(--s-3);
+    }
+
+    .trust-lead__icon {
+      width: 40px;
+      height: 40px;
+      color: var(--accent);
+    }
+
+    .trust-card {
+      display: flex;
+      align-items: start;
+      gap: 14px;
+      padding: 18px;
+      border-radius: 22px;
+    }
+
+    .trust-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding-block-start: 2px;
+      color: var(--accent);
+      font-size: var(--t-small);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      text-align: center;
+    }
+
+    .trust-footer__icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .pricing-panel {
+      display: grid;
+      gap: var(--s-4);
+    }
+
+    .pricing-subline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-2);
+      font-size: var(--t-body);
+      font-weight: 500;
+    }
+
+    .pricing-subline__icon {
+      width: 20px;
+      height: 20px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-3);
+    }
+
+    .tier-card {
+      padding: 22px 18px;
+      border-radius: 24px;
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .tier-card--pro {
+      border-color: var(--border);
+      box-shadow: none;
+    }
+
+    .tier-card__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .tier-card__name {
+      font-size: clamp(24px, 6vw, 28px);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .tier-card__badge {
+      color: var(--text);
+      font-size: var(--t-body);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .tier-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tier-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      min-width: 0;
+    }
+
+    .tier-row__period {
+      color: var(--text-2);
+      font-size: var(--t-small);
+      font-weight: 500;
+    }
+
+    .tier-row__price {
+      font-size: var(--t-body);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    .tier-row__price small {
+      font-size: 0.78em;
+      color: var(--text-2);
+      font-weight: 600;
+    }
+
+    .pricing-features {
+      display: grid;
+      gap: var(--s-2);
+      overflow: hidden;
+      padding-inline: var(--s-5);
+    }
+
+    .pricing-feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .pricing-feature__title,
+    .pricing-feature__sub {
+      overflow-wrap: anywhere;
+      word-break: normal;
+      hyphens: auto;
+    }
+
+    .pricing-featured {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 22px var(--s-5);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 12% 30%, rgba(47,102,232,0.18), transparent 24%),
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--bg-elevated) 96%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .pricing-featured__icon {
+      color: var(--accent);
+      background: radial-gradient(circle at 50% 35%, rgba(47,102,232,0.30), rgba(47,102,232,0.08));
+      box-shadow: 0 18px 34px rgba(47,102,232,0.16);
+    }
+
+    .pricing-featured__copy {
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .pricing-featured__title {
+      margin: 0;
+      font-size: clamp(34px, 8vw, 44px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      overflow-wrap: anywhere;
+      max-width: 100%;
+      hyphens: auto;
+    }
+
+    .price-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--bg-elevated) 96%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .price-strip__copy {
+      display: grid;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .price-strip__langs {
+      color: var(--text-2);
+      font-size: var(--t-small);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .final-panel {
+      position: relative;
+      padding: 30px 22px 26px;
+      border-radius: 30px;
+      text-align: center;
+      display: grid;
+      gap: var(--s-5);
+      overflow: hidden;
+    }
+
+    .final-panel::before {
+      content: '';
+      position: absolute;
+      inset-block-start: 18px;
+      inset-inline: 0;
+      block-size: 160px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(47,102,232,0.12), transparent 42%);
       pointer-events: none;
     }
 
-    .header { text-align: center; margin-bottom: 20px; }
-
-    .lang-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
-    
-    .lang-btn {
-      background: var(--card); border: 1px solid var(--card-border); border-radius: 999px;
-      color: var(--text-muted); font-family: inherit; font-size: 0.75rem; font-weight: 600;
-      padding: 6px 12px; cursor: pointer; transition: all 0.18s;
-    }
-    
-    .lang-btn:hover, .lang-btn.active {
-      background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(0,212,170,0.1));
-      border-color: rgba(108,99,255,0.5); color: var(--text-main);
+    .final-logo {
+      position: relative;
+      display: grid;
+      place-items: center;
+      gap: 12px;
+      min-height: 118px;
+      margin-block-end: 2px;
     }
 
-    .logo-wrap { margin-bottom: 4px; }
-    .logo {
-      font-size: clamp(2.2rem, 8vw, 2.6rem); font-weight: 800; letter-spacing: -0.04em;
-      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      line-height: 1; margin: 0;
-    }
-    .logo-sub {
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--text-muted); display: block; margin-top: 4px;
-    }
-    
-    .tagline { margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
-    .tagline strong { 
-      font-weight: 800; background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
-      -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;
+    .final-logo__orbit {
+      position: absolute;
+      inset: 0;
+      color: var(--accent);
+      opacity: 0.28;
+      pointer-events: none;
     }
 
-    @property --a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-    @keyframes spin-border-how { to { --a: 360deg; } }
-    .btn-how-outer { display: inline-block; border-radius: 999px; padding: 1.5px; margin-top: 12px; background: conic-gradient(from var(--a), rgba(108,99,255,0.15) 0%, rgba(108,99,255,0.15) 40%, #6c63ff 50%, #00d4aa 57%, rgba(108,99,255,0.15) 67%, rgba(108,99,255,0.15) 100%); animation: spin-border-how 2.5s linear infinite; }
-    .btn-outline { display: inline-flex; align-items: center; justify-content: center; padding: 10px 24px; background: #1a1a2e; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 600; border-radius: 999px; border: none; cursor: pointer; white-space: nowrap; }
-    .btn-outline:hover { background: #232340; color: rgba(255,255,255,0.85); }
-
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center; }
-    
-    .field input[type="text"], .field input[type="url"], .field select {
-      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
-      border-radius: 14px; color: var(--text-main); padding: 12px 16px; font-family: inherit; font-size: 1rem;
-      outline: none; transition: border-color 0.2s, box-shadow 0.2s; text-align: left;
+    .final-logo__brand {
+      position: relative;
+      justify-self: center;
+      gap: 12px;
     }
-    
-    body.rtl .field input[type="text"], body.rtl .field input[type="url"], body.rtl .field select { text-align: right; }
-    
-    .field input:focus, .field select:focus { border-color: var(--accent-1); box-shadow: 0 0 0 3px rgba(108,99,255,0.18); }
-    .field input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(255,85,102,0.15); }
-    .field input::placeholder { color: var(--text-muted); opacity: 0.6; }
 
-    .field select {
-      appearance: none; cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0b0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 16px center;
+    .final-logo__brand .brand-mark {
+      width: 54px;
+      height: 54px;
     }
-    body.rtl .field select { background-position: left 16px center; }
-    .field select option { background: var(--bg-2); color: #fff; }
 
-    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .final-panel__title {
+      margin: 0;
+      font-size: clamp(38px, 9.5vw, 52px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+    }
+
+    .footer {
+      padding-block: var(--s-16) var(--s-6);
+      text-align: center;
+    }
+
+    .footer-nav,
+    .footer-subnav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 22px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .footer-nav {
+      margin-block-end: 12px;
+    }
+
+    .footer-subnav {
+      margin-block-end: 18px;
+    }
+
+    .footer-nav a,
+    .footer-subnav a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      color: var(--text-2);
+      font-size: var(--t-small);
+      font-weight: 600;
+    }
+
+    .footer-nav a:hover,
+    .footer-subnav a:hover {
+      color: var(--text);
+    }
+
+    .footer-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-block-end: 14px;
+    }
+
+    .footer-brand .brand-mark {
+      width: 28px;
+      height: 28px;
+    }
+
+    .footer-brand .brand-name {
+      font-size: var(--t-subhead);
+    }
+
+    .footer-copy {
+      color: var(--text-3);
+      font-size: var(--t-caption);
+      letter-spacing: 0.06em;
+    }
+
+    .legacy-form {
+      padding-block: var(--s-8) 0;
+    }
+
+    .legacy-form[hidden] {
+      display: none !important;
+    }
+
+    .legacy-form__shell {
+      width: min(100% - 32px, 430px);
+      margin-inline: auto;
+      display: grid;
+      gap: 18px;
+      padding: 20px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--bg-elevated) 96%, transparent));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .legacy-form__shim {
+      width: 58px;
+      height: 5px;
+      border-radius: var(--r-full);
+      background: color-mix(in srgb, var(--text) 14%, transparent);
+      justify-self: center;
+    }
+
+    .legacy-hidden-copy {
+      display: none !important;
+    }
+
+    .field {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field label,
+    #nameLabel,
+    #roleLabel,
+    #nicheLabel,
+    #rewardLabel,
+    #payLabel,
+    #socialLabel,
+    #channelTitle {
+      color: var(--text);
+      font-size: var(--t-small);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-align: start;
+    }
+
+    .field input[type="text"],
+    .field input[type="url"],
+    .field select,
+    #rewardValue {
+      width: 100%;
+      min-height: 52px;
+      padding-inline: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+      color: var(--text);
+      font-size: var(--t-body);
+      transition: border-color var(--t-base) var(--ease), background var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
+    }
+
+    .field input::placeholder {
+      color: var(--text-3);
+      opacity: 1;
+    }
+
+    .field input[type="text"]:focus,
+    .field input[type="url"]:focus,
+    .field select:focus,
+    #rewardValue:focus {
+      border-color: var(--accent-border);
+      background: color-mix(in srgb, var(--surface-hover) 92%, transparent);
+      box-shadow: 0 0 0 3px rgba(47,102,232,0.14);
+      outline: none;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
     .role-card {
-      background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
-      padding: 14px 8px; cursor: pointer; text-align: center; transition: all 0.2s var(--ease-out); user-select: none;
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--t-base) var(--ease), transform var(--t-base) var(--ease), background var(--t-base) var(--ease);
+      text-align: start;
     }
-    .role-card input { display: none; }
-    .role-card:hover { border-color: rgba(108,99,255,0.3); background: rgba(255,255,255,0.06); }
+
+    .role-card:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent-border);
+    }
+
+    .role-card input {
+      display: none;
+    }
+
     .role-card.selected {
-      background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(0,212,170,0.05));
-      border-color: var(--accent-1); box-shadow: 0 0 0 2px rgba(108,99,255,0.2);
+      border-color: var(--accent-border);
+      background: var(--accent-bg);
+      box-shadow: 0 0 0 1px rgba(47,102,232,0.18);
     }
-    .role-card .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
-    .role-card .role-name { font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 4px; line-height: 1.2; }
-    .role-card .role-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; padding: 0 4px; }
 
-    .seg-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .role-card .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    .role-card .icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .role-card .role-name {
+      color: var(--text);
+      font-size: var(--t-body);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .role-card .role-desc {
+      color: var(--text-2);
+      font-size: var(--t-caption);
+      line-height: 1.45;
+    }
+
+    .seg-group {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
     .seg {
-      flex: 1; min-width: 80px; text-align: center; background: var(--card); border: 1px solid var(--card-border);
-      border-radius: 12px; padding: 10px 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
-      cursor: pointer; transition: all 0.18s; user-select: none;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+      color: var(--text-2);
+      font-size: var(--t-small);
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: border-color var(--t-base) var(--ease), background var(--t-base) var(--ease), color var(--t-base) var(--ease);
     }
-    .seg input { display: none; }
+
+    .seg input {
+      display: none;
+    }
+
     .seg:has(input:checked) {
-      background: linear-gradient(135deg, rgba(108,99,255,0.25), rgba(0,212,170,0.1));
-      border-color: rgba(108,99,255,0.5); color: var(--text-main);
+      color: var(--text-on-accent);
+      background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+      border-color: transparent;
+      box-shadow: 0 14px 28px rgba(47,102,232,0.18);
     }
 
-    .expandable { max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease-out), opacity 0.3s; opacity: 0; }
-    .expandable.open { max-height: 2000px; opacity: 1; overflow: visible; margin-top: 16px; }
-    .reward-value-wrap { margin-top: 10px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.3s; opacity: 0; }
-    .reward-value-wrap.open { max-height: 80px; opacity: 1; overflow: visible; }
-
-    .divider { height: 1px; background: var(--card-border); margin: 16px 0; }
-
-    .channel-title { text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; }
-    .channel-btns { display: flex; flex-direction: column; gap: 10px; }
-    .btn-wa, .btn-tg {
-      display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 14px;
-      border: none; border-radius: 999px; color: #fff; font-family: inherit; font-size: 1rem; font-weight: 700;
-      cursor: pointer; text-decoration: none; transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+    .expandable {
+      display: grid;
+      gap: 18px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height var(--t-slow) var(--ease), opacity var(--t-base) var(--ease), margin-block-start var(--t-base) var(--ease);
+      margin-block-start: 0;
     }
-    .btn-wa { background: linear-gradient(135deg, #22c55e, var(--wa)); box-shadow: 0 8px 24px rgba(37,211,102,0.2); }
-    .btn-tg { background: linear-gradient(135deg, #149adf, var(--tg)); box-shadow: 0 8px 24px rgba(42,171,238,0.2); }
-    .btn-wa:hover:not(:disabled), .btn-tg:hover:not(:disabled) { transform: scale(1.02); filter: brightness(1.05); }
-    .btn-wa:disabled, .btn-tg:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(0.6); }
 
-    .qr-section { margin-top: 32px; text-align: center; }
-    .qr-section-title { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-    .qr-section-title::before, .qr-section-title::after { content: ""; flex: 1; height: 1px; background: var(--card-border); }
-    .qr-card { display: inline-block; background: #fff; border-radius: 20px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 2px rgba(108,99,255,0.2); }
-    #qrcode canvas, #qrcode img { display: block; border-radius: 8px; }
-    .qr-hint { margin-top: 12px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .expandable.open {
+      max-height: 2400px;
+      opacity: 1;
+      margin-block-start: 2px;
+    }
 
-    .footer { text-align: center; margin-top: 24px; font-size: 0.75rem; color: var(--text-muted); }
-    .footer-note { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; }
-    .idx-cb-item { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 14px; cursor:pointer; transition:0.2s; }
-    .idx-cb-item.checked { background:rgba(86,204,242,0.08); border-color:rgba(86,204,242,0.4); }
-    .idx-cb-item input[type=checkbox] { width:18px; height:18px; accent-color:#56CCF2; flex-shrink:0; }
-    .idx-cb-item span { font-size:0.9rem; font-weight:600; color:#e0e0e0; }
+    .reward-value-wrap {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height var(--t-base) var(--ease), opacity var(--t-base) var(--ease);
+    }
+
+    .reward-value-wrap.open {
+      max-height: 120px;
+      opacity: 1;
+    }
+
+    .divider {
+      block-size: 1px;
+      background: var(--border);
+    }
+
+    .channel-title {
+      color: var(--text);
+    }
+
+    .channel-btns {
+      display: grid;
+      gap: 12px;
+    }
+
+    .btn-wa,
+    .btn-tg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 56px;
+      padding-inline: 18px;
+      border-radius: 16px;
+      color: #fff;
+      font-size: var(--t-body);
+      font-weight: 700;
+      transition: transform var(--t-base) var(--ease), opacity var(--t-base) var(--ease), filter var(--t-base) var(--ease);
+    }
+
+    .btn-wa {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--wa) 88%, white), var(--wa));
+      box-shadow: 0 18px 34px rgba(37,211,102,0.18);
+    }
+
+    .btn-tg {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--tg) 88%, white), var(--tg));
+      box-shadow: 0 18px 34px rgba(42,171,238,0.18);
+    }
+
+    .btn-wa:hover:not(:disabled),
+    .btn-tg:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .btn-wa:disabled,
+    .btn-tg:disabled {
+      opacity: 0.46;
+      filter: grayscale(0.12);
+      cursor: not-allowed;
+    }
+
+    .qr-section[hidden],
+    [hidden] {
+      display: none !important;
+    }
+
+    .idx-cb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+      border: 1px solid var(--border);
+      transition: border-color var(--t-base) var(--ease), background var(--t-base) var(--ease);
+    }
+
+    .idx-cb-item.checked {
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+    }
+
+    .idx-cb-item input[type=checkbox] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .idx-cb-item span {
+      color: var(--text);
+      font-size: var(--t-small);
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .subcat-action {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: var(--t-small);
+      transition: transform var(--t-base) var(--ease), filter var(--t-base) var(--ease);
+    }
+
+    .subcat-action:hover {
+      transform: translateY(-1px);
+    }
+
+    .subcat-action--primary {
+      color: #fff;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent-hover) 85%, #56CCF2), color-mix(in srgb, var(--accent) 70%, #2F80ED));
+      box-shadow: 0 14px 28px rgba(86,204,242,0.18);
+    }
+
+    .subcat-action--secondary {
+      color: var(--text-2);
+      background: transparent;
+      border: 1px solid var(--border);
+    }
+
+    .icon-stroke {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 479px) {
+      .pricing-featured {
+        align-items: flex-start;
+      }
+
+      .pricing-featured__title {
+        font-size: var(--t-title);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .brand-name {
+        display: none;
+      }
+
+      .topbar__row {
+        gap: 10px;
+      }
+
+      .topbar__actions {
+        gap: 6px;
+      }
+
+      .lang-dropdown > summary {
+        padding-inline: 10px;
+        gap: 6px;
+      }
+
+      .lang-dropdown__chevron {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    @media (max-width: 359px) {
+      .tier-row__price {
+        font-size: var(--t-small);
+      }
+    }
+
+    @media (max-width: 379px) {
+      .role-mini-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .container,
+      .legacy-form__shell {
+        width: min(100% - 40px, 720px);
+      }
+
+      .section {
+        padding-block: var(--s-12);
+      }
+
+      .hero-orbit__image {
+        max-width: 440px;
+      }
+
+      .hero__actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .pricing-panel,
+      .trust-panel {
+        gap: var(--s-5);
+      }
+
+      .pricing-features {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .trust-panel__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--s-3);
+      }
+
+      .trust-panel__grid .trust-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .final-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .container,
+      .legacy-form__shell {
+        width: min(100% - 56px, 1080px);
+      }
+
+      .section {
+        padding-block: 56px;
+      }
+
+      .topbar__nav {
+        display: flex;
+      }
+
+      .nav-toggle,
+      .nav-drawer {
+        display: none;
+      }
+
+      .hero__grid {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: var(--s-8);
+      }
+
+      .hero__actions {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+      }
+
+      .role-mini-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .trust-panel__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .pricing-panel {
+        gap: 22px;
+      }
+
+      .pricing-featured {
+        padding: 22px;
+      }
+
+      .final-panel {
+        padding: 32px 32px 28px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .hero-orbit::before {
+        content: "";
+        position: absolute;
+        inset: 50% 50%;
+        width: 80%;
+        height: 80%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(ellipse at center,
+          rgba(94, 132, 232, 0.18) 0%,
+          rgba(47, 102, 232, 0.08) 40%,
+          transparent 70%);
+        filter: blur(40px);
+        z-index: 0;
+        pointer-events: none;
+      }
+    }
+
+    [data-theme="dark"] .hero-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 50% 50%;
+      width: 80%;
+      height: 80%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at center,
+        rgba(94, 132, 232, 0.18) 0%,
+        rgba(47, 102, 232, 0.08) 40%,
+        transparent 70%);
+      filter: blur(40px);
+      z-index: 0;
+      pointer-events: none;
+    }
+  
+
+    /* ===============================
+       V2 Trust Orbit pixel refinement
+       CSS-only visual pass
+       =============================== */
+
+    :root {
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.04);
+      --shadow-md: 0 1px 2px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.06);
+      --shadow-lg: 0 10px 26px rgba(15,23,42,0.10), 0 24px 56px rgba(47,102,232,0.08);
+      --page-x: 24px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.16);
+        --shadow-md: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.25);
+        --shadow-lg: 0 16px 40px rgba(0,0,0,0.44), 0 28px 70px rgba(47,102,232,0.12);
+      }
+    }
+
+    [data-theme="dark"] {
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.16);
+      --shadow-md: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.25);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.44), 0 28px 70px rgba(47,102,232,0.12);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 50% -10%, rgba(47,102,232,0.12), transparent 34%),
+        radial-gradient(circle at 100% 16%, rgba(42,171,238,0.10), transparent 26%),
+        linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 94%, #fff 6%) 100%);
+    }
+
+    [data-theme="dark"] body,
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) body {
+        background:
+          radial-gradient(circle at 50% -8%, rgba(47,102,232,0.20), transparent 32%),
+          radial-gradient(circle at 100% 16%, rgba(42,171,238,0.10), transparent 25%),
+          linear-gradient(180deg, var(--bg) 0%, #070B18 100%);
+      }
+    }
+
+    .container {
+      width: min(100% - var(--page-x), 430px);
+    }
+
+    .topbar {
+      padding-block: 10px;
+      border-bottom-color: color-mix(in srgb, var(--border) 68%, transparent);
+    }
+
+    .topbar__row {
+      min-height: 48px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+    }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.034em;
+    }
+
+    .nav-toggle,
+    .lang-dropdown > summary {
+      min-height: 40px;
+      border-color: color-mix(in srgb, var(--border) 86%, transparent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .page {
+      padding-block: 0 var(--s-12);
+    }
+
+    .section {
+      padding-block: var(--s-10);
+    }
+
+    .hero.section {
+      padding-block-start: var(--s-6);
+      padding-block-end: var(--s-8);
+    }
+
+    .hero__content {
+      gap: 15px;
+    }
+
+    .eyebrow {
+      min-height: 30px;
+      padding-inline: 12px;
+      font-size: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero__title {
+      font-size: clamp(35px, 9.8vw, 48px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.042em;
+      max-width: 10.5em;
+    }
+
+    .lead {
+      font-size: 15.5px;
+      line-height: 1.46;
+      letter-spacing: -0.025em;
+      max-width: 34em;
+    }
+
+    .hero-orbit {
+      margin-block: 0;
+      overflow: visible;
+    }
+
+    .hero-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 50% 50%;
+      width: min(92vw, 430px);
+      height: min(72vw, 340px);
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at center,
+        rgba(47,102,232,0.12) 0%,
+        rgba(42,171,238,0.07) 38%,
+        transparent 72%);
+      filter: blur(32px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-orbit__image {
+      width: min(100%, 350px);
+      max-width: 350px;
+      margin-inline: auto;
+      transform: translateZ(0);
+      filter: drop-shadow(0 22px 44px rgba(31,79,204,0.20));
+      -webkit-mask: radial-gradient(ellipse 60% 60% at center, #000 60%, transparent 80%);
+              mask: radial-gradient(ellipse 60% 60% at center, #000 60%, transparent 80%);
+    }
+
+    .hero__actions,
+    .final-actions {
+      gap: 12px;
+    }
+
+    .button {
+      min-height: 58px;
+      padding-inline: 20px;
+      border-radius: 16px;
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .button--primary {
+      background: linear-gradient(180deg, #4E82FF 0%, #2462F2 52%, #1F4FCC 100%);
+      box-shadow: 0 14px 30px rgba(47,102,232,0.30), inset 0 1px 0 rgba(255,255,255,0.28);
+    }
+
+    .button--secondary {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 48%, transparent);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      box-shadow: 0 1px 2px rgba(15,23,42,0.03);
+    }
+
+    [data-theme="dark"] .button--secondary {
+      color: #DCE7FF;
+      background: rgba(255,255,255,0.02);
+      border-color: rgba(91,135,255,0.42);
+    }
+
+    .strip-card,
+    .feature-card,
+    .step-card__panel,
+    .pricing-feature,
+    .trust-card,
+    .tier-card,
+    .role-mini-card,
+    .final-panel,
+    .legacy-form__shell {
+      box-shadow: var(--shadow-md);
+    }
+
+    .strip-card {
+      padding: 14px 16px;
+      border-radius: 20px;
+      margin-block-start: 18px;
+    }
+
+    .messenger-badge {
+      width: 42px;
+      height: 42px;
+    }
+
+    .section-header {
+      gap: 8px;
+      margin-block-end: var(--s-6);
+    }
+
+    .section-title,
+    .trust-lead .section-title {
+      font-size: clamp(30px, 8.2vw, 40px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .section-sub {
+      font-size: 15.5px;
+      line-height: 1.48;
+      letter-spacing: -0.025em;
+    }
+
+    .stepper {
+      gap: 12px;
+      margin-block-end: 20px;
+    }
+
+    .stepper::before {
+      content: '';
+      position: absolute;
+      inset-block: 22px;
+      inset-inline-start: 21px;
+      border-inline-start: 2px dashed color-mix(in srgb, var(--accent) 34%, transparent);
+      z-index: 0;
+    }
+
+    .step-card:not(:last-child)::after {
+      display: none;
+    }
+
+    .step-card {
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 12px;
+      z-index: 1;
+    }
+
+    .step-card__index {
+      z-index: 2;
+      box-shadow: 0 12px 24px rgba(47,102,232,0.28), inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    .step-card__panel {
+      min-height: 86px;
+      padding: 14px 14px 14px 16px;
+      border-radius: 20px;
+    }
+
+    .step-card__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+    }
+
+    .step-card__title,
+    .feature-card__title,
+    .pricing-feature__title,
+    .trust-card__title,
+    .strip-card__title,
+    .price-strip__title {
+      font-weight: 800;
+      letter-spacing: -0.032em;
+    }
+
+    .triple-grid {
+      gap: var(--s-2);
+    }
+
+    .feature-card {
+      padding: 15px 16px;
+      border-radius: 20px;
+    }
+
+    .feature-card__icon,
+    .trust-card__icon,
+    .pricing-feature__icon,
+    .pricing-featured__icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+    }
+
+    .role-mini-grid {
+      gap: 12px;
+      margin-block-start: 14px;
+    }
+
+    .role-mini-card {
+      padding: 15px;
+      border-radius: 19px;
+    }
+
+    .role-mini-card__head {
+      font-size: 15px;
+      line-height: 1.15;
+    }
+
+    .role-mini-card__sub {
+      font-size: 12px;
+      line-height: 1.34;
+    }
+
+    .trust-panel,
+    .pricing-panel {
+      gap: 16px;
+    }
+
+    .trust-lead {
+      gap: 12px;
+      margin-block-end: 0;
+    }
+
+    .trust-lead__icon {
+      width: 38px;
+      height: 38px;
+    }
+
+    .trust-panel__grid {
+      display: grid;
+      gap: var(--s-2);
+    }
+
+    .trust-card {
+      padding: 16px;
+      border-radius: 20px;
+      align-items: center;
+    }
+
+    .trust-footer {
+      padding-block-start: 0;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .tier-grid {
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .tier-card {
+      padding: 20px 14px;
+      border-radius: 22px;
+      gap: 16px;
+      min-width: 0;
+      align-content: start;
+      height: 100%;
+    }
+
+    .tier-card--pro {
+      border-color: var(--border);
+      box-shadow: none;
+    }
+
+    .tier-card__name {
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 800;
+    }
+
+    .tier-card--pro .tier-card__name,
+    .tier-card__badge {
+      color: var(--text);
+    }
+
+    .tier-card__badge {
+      display: none;
+    }
+
+    .tier-list {
+      gap: 10px;
+    }
+
+    .tier-row {
+      display: grid;
+      grid-template-columns: minmax(60px, auto) minmax(0, 1fr);
+      align-items: baseline;
+      justify-content: initial;
+      gap: 6px 8px;
+      white-space: normal;
+      padding-block: 4px;
+    }
+
+    .tier-row__period {
+      font-size: 12px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .tier-row__price {
+      justify-self: end;
+      font-size: 18px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .tier-row__price small {
+      font-size: .64em;
+      white-space: nowrap;
+    }
+
+    .pricing-features {
+      gap: var(--s-2);
+      padding-inline: 0;
+    }
+
+    .pricing-feature {
+      padding: 15px 16px;
+      border-radius: 18px;
+      gap: 13px;
+    }
+
+    .pricing-feature__icon {
+      width: 42px;
+      height: 42px;
+    }
+
+    .pricing-featured {
+      align-items: flex-start;
+      gap: 14px;
+      padding: 20px 18px;
+      border-radius: 24px;
+    }
+
+    .pricing-featured__title {
+      font-size: clamp(27px, 7.2vw, 36px);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .final-panel {
+      padding: 26px 20px 24px;
+      border-radius: 28px;
+      gap: 16px;
+    }
+
+    .final-logo {
+      min-height: 90px;
+      margin-block-end: 0;
+    }
+
+    .final-logo__brand .brand-mark {
+      width: 50px;
+      height: 50px;
+    }
+
+    .final-panel__title {
+      font-size: clamp(34px, 8.8vw, 46px);
+      line-height: 1.08;
+      letter-spacing: -0.044em;
+    }
+
+    .footer {
+      padding-block: 36px 22px;
+    }
+
+    .footer-nav,
+    .footer-subnav {
+      gap: 8px 20px;
+    }
+
+    .footer-subnav {
+      margin-block-end: 16px;
+    }
+
+    .footer-brand {
+      margin-block-end: 10px;
+    }
+
+    .footer-copy {
+      letter-spacing: 0.01em;
+    }
+
+    .legacy-form {
+      padding-block: 18px 0;
+    }
+
+    .legacy-form__shell {
+      border-radius: 30px 30px 0 0;
+      padding: 18px;
+      gap: 16px;
+    }
+
+    .field input[type="text"],
+    .field input[type="url"],
+    .field select,
+    #rewardValue {
+      min-height: 50px;
+      border-radius: 15px;
+    }
+
+    .role-card {
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .role-card .icon {
+      width: 42px;
+      height: 42px;
+    }
+
+    .seg {
+      min-height: 46px;
+      border-radius: 13px;
+    }
+
+    /* Visual-only role label fix, no JS touched */
+    body:has(input[name="role"][value="agent"]:checked) #nameLabel {
+      font-size: 0;
+      color: transparent;
+    }
+
+    body:has(input[name="role"][value="agent"]:checked) #nameLabel::after {
+      display: inline;
+      font-size: var(--t-small);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    html[lang="ru"] body:has(input[name="role"][value="agent"]:checked) #nameLabel::after { content: "Ваше имя"; }
+    html[lang="en"] body:has(input[name="role"][value="agent"]:checked) #nameLabel::after { content: "Your name"; }
+    html[lang="he"] body:has(input[name="role"][value="agent"]:checked) #nameLabel::after { content: "שמך"; }
+    html[lang="ar"] body:has(input[name="role"][value="agent"]:checked) #nameLabel::after { content: "اسمك"; }
+
+    @media (max-width: 359px) {
+      :root { --page-x: 18px; }
+      .hero__title { font-size: 32px; }
+      .lead { font-size: 14.5px; }
+      .button { min-height: 54px; }
+      .tier-card { padding-inline: 10px; }
+      .tier-row { grid-template-columns: minmax(54px, auto) minmax(0, 1fr); }
+      .tier-row__period { font-size: 11.5px; }
+      .tier-row__price { font-size: 16px; }
+    }
+
+    @media (min-width: 768px) {
+      .section { padding-block: var(--s-12); }
+      .hero.section { padding-block: var(--s-10) var(--s-12); }
+      .hero__content { gap: 18px; }
+      .hero-orbit { margin-block: 0; }
+      .hero-orbit__image { max-width: 410px; width: min(100%, 410px); }
+      .section-header { margin-block-end: var(--s-6); }
+      .pricing-features { grid-template-columns: 1fr; }
+      .tier-card { padding: 18px; }
+      .tier-card__name { font-size: 24px; }
+      .tier-row__period { font-size: 13px; }
+      .tier-row__price { font-size: 20px; }
+    }
+
+    @media (min-width: 1024px) {
+      .container,
+      .legacy-form__shell {
+        width: min(100% - 56px, 760px);
+      }
+      .section { padding-block: 56px; }
+      .hero.section { padding-block-start: var(--s-10); }
+      .hero__actions { max-width: 430px; }
+      .tier-card { padding: 20px; }
+      .pricing-features { grid-template-columns: 1fr 1fr; }
+      .trust-panel__grid { gap: var(--s-3); }
+    }
+
   </style>
 </head>
 <body>
-<main class="shell">
+<div class="page-shell" id="top">
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar__row">
+        <a href="/" class="brand" aria-label="Win-Win Network">
+          <img src="/favicon-192.png"
+               alt=""
+               class="brand-mark"
+               width="32"
+               height="32"
+               decoding="async"
+               loading="eager">
+          <span class="brand-name">Win-Win Network</span>
+        </a>
 
-  <header class="header">
-    <div class="lang-bar">
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="he">עב</button>
-      <button class="lang-btn" data-lang="ar">عر</button>
-      <button class="lang-btn active" data-lang="ru">РУ</button>
-    </div>
-    <div class="logo-wrap">
-      <h1 class="logo">Win-Win</h1>
-      <span class="logo-sub">Network</span>
-    </div>
-    <p class="tagline" id="tagline">Платформа взаимовыгодных рекомендаций.<br><strong>Здесь выигрывают все!</strong></p>
-    
-    <div class="btn-how-outer">
-      <a href="about.html" id="aboutLink" class="btn-outline">Как это работает?</a>
+        <nav class="topbar__nav" aria-label="Primary">
+          <a href="#top" class="is-current" id="t_menuHome_top">Home</a>
+          <a href="#how-it-works" id="t_menuHowWorks_top">How it works</a>
+          <a href="#pricing" id="t_menuPricing_top">Pricing</a>
+          <a href="about.html" id="t_menuAbout_top">About</a>
+        </nav>
+
+        <div class="topbar__actions">
+          <div class="lang-dropdown" id="langDropdown" data-open="false">
+            <button type="button" class="lang-trigger" id="langTrigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Choose language">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/>
+                <path class="icon-stroke" d="M2 12h20"/>
+                <path class="icon-stroke" d="M12 2a15 15 0 0 1 0 20"/>
+                <path class="icon-stroke" d="M12 2a15 15 0 0 0 0 20"/>
+              </svg>
+              <span class="lang-trigger__code" id="desktopLangCode">RU</span>
+              <svg class="lang-trigger__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                <path class="icon-stroke" d="m5 7 5 5 5-5"/>
+              </svg>
+            </button>
+            <div class="lang-menu" id="langMenu" role="listbox" hidden>
+              <button type="button" class="lang-btn lang-option" data-lang="en">
+                <span class="lang-option__code">EN</span>
+                <span class="lang-option__name" id="t_langLabelEN_desktop">English</span>
+                <svg class="lang-option__check" viewBox="0 0 20 20" aria-hidden="true">
+                  <path class="icon-stroke" d="m4 10 4 4 8-8"/>
+                </svg>
+              </button>
+              <button type="button" class="lang-btn lang-option" data-lang="he">
+                <span class="lang-option__code">HE</span>
+                <span class="lang-option__name" id="t_langLabelHE_desktop">עברית</span>
+                <svg class="lang-option__check" viewBox="0 0 20 20" aria-hidden="true">
+                  <path class="icon-stroke" d="m4 10 4 4 8-8"/>
+                </svg>
+              </button>
+              <button type="button" class="lang-btn lang-option" data-lang="ar">
+                <span class="lang-option__code">AR</span>
+                <span class="lang-option__name" id="t_langLabelAR_desktop">العربية</span>
+                <svg class="lang-option__check" viewBox="0 0 20 20" aria-hidden="true">
+                  <path class="icon-stroke" d="m4 10 4 4 8-8"/>
+                </svg>
+              </button>
+              <button type="button" class="lang-btn lang-option" data-lang="ru">
+                <span class="lang-option__code">RU</span>
+                <span class="lang-option__name" id="t_langLabelRU_desktop">Русский</span>
+                <svg class="lang-option__check" viewBox="0 0 20 20" aria-hidden="true">
+                  <path class="icon-stroke" d="m4 10 4 4 8-8"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="button" class="nav-toggle" id="navToggle" aria-label="Open menu" aria-controls="navDrawer" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M4 7h16"/>
+              <path class="icon-stroke" d="M4 12h16"/>
+              <path class="icon-stroke" d="M4 17h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
-  <section class="panel">
+  <div class="nav-drawer" id="navDrawer">
+    <div class="nav-drawer__panel">
+      <div class="nav-drawer__head">
+        <a href="/" class="brand" aria-label="Win-Win Network">
+          <img src="/favicon-192.png"
+               alt=""
+               class="brand-mark"
+               width="32"
+               height="32"
+               decoding="async"
+               loading="eager">
+          <span class="brand-name">Win-Win Network</span>
+        </a>
+        <button type="button" class="nav-drawer__close" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+            <path class="icon-stroke" d="m5 5 10 10"/>
+            <path class="icon-stroke" d="m15 5-10 10"/>
+          </svg>
+        </button>
+      </div>
 
-    <div class="field">
-      <label id="nameLabel">Ваше имя или название бизнеса</label>
-      <input type="text" id="nameInput" placeholder="Введите имя..." autocomplete="off" />
-    </div>
+      <div class="nav-drawer__layout">
+        <nav class="nav-drawer__nav" aria-label="Mobile">
+          <a href="#top" class="nav-link is-current">
+            <svg class="nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M4 10.5 12 4l8 6.5"/>
+              <path class="icon-stroke" d="M7 10v8h10v-8"/>
+            </svg>
+            <span id="t_menuHome_drawer">Home</span>
+          </a>
+          <a href="#how-it-works" class="nav-link">
+            <svg class="nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M6 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+              <path class="icon-stroke" d="M18 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+              <path class="icon-stroke" d="M18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+              <path class="icon-stroke" d="M7.8 14.9 16.2 9.1"/>
+              <path class="icon-stroke" d="M7.8 17.1 16.2 22.9"/>
+            </svg>
+            <span id="t_menuHowWorks_drawer">How it works</span>
+          </a>
+          <a href="#pricing" class="nav-link">
+            <svg class="nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M8 8h8"/>
+              <path class="icon-stroke" d="M12 4v16"/>
+              <path class="icon-stroke" d="M16.5 15a3.5 3.5 0 0 1-7 0"/>
+              <path class="icon-stroke" d="M14.5 9a3.5 3.5 0 0 0-7 0"/>
+            </svg>
+            <span id="t_menuPricing_drawer">Pricing</span>
+          </a>
+          <a href="about.html" class="nav-link" id="navAboutDrawer">
+            <svg class="nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+              <path class="icon-stroke" d="M12 9h.01"/>
+              <path class="icon-stroke" d="M11 12h1v4h1"/>
+            </svg>
+            <span id="t_menuAbout_drawer">About</span>
+          </a>
+        </nav>
 
-    <div class="field" style="margin-bottom: 0;">
-      <label id="roleLabel">Присоединиться как:</label>
-      <div class="role-grid">
-        <label class="role-card" id="cardBusiness">
-          <input type="radio" name="role" value="business">
-          <span class="icon">🏢</span>
-          <span class="role-name" id="roleBizName">Владелец бизнеса</span>
-          <span class="role-desc" id="roleBizDesc">Хочу увеличить базу клиентов</span>
-        </label>
-        <label class="role-card" id="cardAgent">
-          <input type="radio" name="role" value="agent">
-          <span class="icon">🤝</span>
-          <span class="role-name" id="roleAgentName">Довольный клиент</span>
-          <span class="role-desc" id="roleAgentDesc">Хочу рекомендовать</span>
-        </label>
+        <div class="menu-pill">
+          <div class="menu-pill__icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+              <path class="icon-stroke" d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <p class="menu-pill__title" id="t_eyebrowNetwork_drawer">Trust-based recommendation network</p>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="expandable" id="bizFields">
-      <div class="field">
-        <label id="nicheLabel">Категория бизнеса</label>
-        <select id="nicheSelect" onchange="updateIndexSubcategories()">
+  <main class="page">
+    <section class="section hero">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="hero__content">
+            <div class="eyebrow">
+              <span class="eyebrow__dot"></span>
+              <span id="t_eyebrowNetwork_hero">Trust-based recommendation network</span>
+            </div>
+
+            <h1 class="hero__title">
+              <span class="hero__title-main" id="t_heroTitle1">Recommendations, deals and trust —</span>
+              <span class="hero__title-accent" id="t_heroTitleAccent">in one transparent system.</span>
+            </h1>
+
+            <p class="lead" id="t_heroSub">We help businesses and recommenders manage referrals, deals, payouts and trust — clearly and securely. Real relationships. Verified deals. Everyone wins.</p>
+
+            <div class="hero-orbit">
+              <img src="/trust-orbit.png"
+                   alt="Win-Win Network — trust diagram"
+                   class="hero-orbit__image"
+                   loading="eager"
+                   decoding="async">
+            </div>
+
+            <div class="hero__actions">
+              <a href="#legacyFormContainer" class="button button--primary" data-cta="business">
+                <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M3 21h18"/>
+                  <path class="icon-stroke" d="M5 21V7l7-4 7 4v14"/>
+                  <path class="icon-stroke" d="M9 11h1"/>
+                  <path class="icon-stroke" d="M9 15h1"/>
+                  <path class="icon-stroke" d="M14 11h1"/>
+                  <path class="icon-stroke" d="M14 15h1"/>
+                </svg>
+                <span id="t_joinBusiness_hero">Join as a Business</span>
+              </a>
+              <a href="#legacyFormContainer" class="button button--secondary" data-cta="agent">
+                <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M15 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                  <path class="icon-stroke" d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+                  <path class="icon-stroke" d="M19 8v6"/>
+                  <path class="icon-stroke" d="M16 11h6"/>
+                </svg>
+                <span id="t_joinRecommender_hero">Join as a Recommender</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title" id="t_howTitle">How Win-Win works</h2>
+          <p class="section-sub" id="t_howSub">Track recommendations from intro to gratitude</p>
+        </div>
+
+        <div class="stepper">
+          <article class="step-card">
+            <div class="step-card__index">1</div>
+            <div class="step-card__panel">
+              <div class="step-card__body">
+                <h3 class="step-card__title" id="t_step1Title">Recommend</h3>
+                <p class="step-card__sub" id="t_step1Body">You introduce the right connection.</p>
+              </div>
+              <div class="step-card__icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M15 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                  <path class="icon-stroke" d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+                  <path class="icon-stroke" d="M19 8v6"/>
+                  <path class="icon-stroke" d="M16 11h6"/>
+                </svg>
+              </div>
+            </div>
+          </article>
+
+          <article class="step-card">
+            <div class="step-card__index">2</div>
+            <div class="step-card__panel">
+              <div class="step-card__body">
+                <h3 class="step-card__title" id="t_step2Title">Deal in progress</h3>
+                <p class="step-card__sub" id="t_step2Body">We track the deal securely in real time.</p>
+              </div>
+              <div class="step-card__icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M4 19h16"/>
+                  <path class="icon-stroke" d="M7 16v-3"/>
+                  <path class="icon-stroke" d="M12 16V9"/>
+                  <path class="icon-stroke" d="M17 16V5"/>
+                  <path class="icon-stroke" d="m5 10 4-4 3 3 6-6"/>
+                </svg>
+              </div>
+            </div>
+          </article>
+
+          <article class="step-card">
+            <div class="step-card__index">3</div>
+            <div class="step-card__panel">
+              <div class="step-card__body">
+                <h3 class="step-card__title" id="t_step3Title">Deal completed</h3>
+                <p class="step-card__sub" id="t_step3Body">The deal with the client was successful.</p>
+              </div>
+              <div class="step-card__icon step-card__icon--success">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M22 11.08V12a10 10 0 1 1-5.92-9.14"/>
+                  <path class="icon-stroke" d="m9 11 3 3L22 4"/>
+                </svg>
+              </div>
+            </div>
+          </article>
+
+          <article class="step-card">
+            <div class="step-card__index">4</div>
+            <div class="step-card__panel">
+              <div class="step-card__body">
+                <h3 class="step-card__title" id="t_step4Title">Gratitude completed</h3>
+                <p class="step-card__sub" id="t_step4Body">Reward is shared through your chosen path.</p>
+              </div>
+              <div class="step-card__icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8"/>
+                  <path class="icon-stroke" d="M22 7H2v5h20V7Z"/>
+                  <path class="icon-stroke" d="M12 21V7"/>
+                  <path class="icon-stroke" d="M12 7H8.5a2.5 2.5 0 0 1 0-5c3 0 3.5 5 3.5 5Z"/>
+                  <path class="icon-stroke" d="M12 7h3.5a2.5 2.5 0 0 0 0-5c-3 0-3.5 5-3.5 5Z"/>
+                </svg>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="strip-card">
+          <div class="strip-card__icons">
+            <span class="messenger-badge messenger-badge--wa">
+              <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+                <path d="M19.11 17.23c-.28-.14-1.64-.81-1.9-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.89 1.09-.16.19-.33.21-.61.07-.28-.14-1.2-.44-2.28-1.41-.85-.76-1.42-1.7-1.58-1.99-.17-.28-.02-.43.12-.57.13-.13.28-.33.42-.49.14-.16.18-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.62-1.49-.85-2.05-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.47.07-.72.35-.25.28-.95.93-.95 2.27 0 1.34.97 2.64 1.11 2.82.14.19 1.9 2.9 4.6 4.07.64.28 1.14.45 1.53.58.64.2 1.23.17 1.69.1.52-.08 1.64-.67 1.87-1.32.23-.65.23-1.21.16-1.32-.06-.12-.25-.19-.53-.33Z"/>
+                <path d="M27.2 4.78A15.8 15.8 0 0 0 4.77 27.2L3 32l4.93-1.72A15.8 15.8 0 1 0 27.2 4.78Zm-11.4 25a13.08 13.08 0 0 1-6.67-1.83l-.48-.29-2.93 1.02.99-2.86-.31-.49A13.06 13.06 0 1 1 15.8 29.78Z"/>
+              </svg>
+            </span>
+            <span class="messenger-badge messenger-badge--tg">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M21.94 4.67c.18-.84-.62-1.53-1.4-1.2L2.24 10.7c-.86.34-.81 1.58.07 1.85l4.64 1.45 1.8 5.59c.25.78 1.24 1.01 1.82.42l2.59-2.63 4.95 3.65c.78.58 1.88.15 2.06-.8l1.77-15.56ZM9.16 13.55l9.27-7.02-7.28 8.39a.88.88 0 0 0-.18.36l-.72 2.95-1.09-3.37a.86.86 0 0 0-.57-.55l-2.76-.86 13.6-5.4-9.9 7.5a.88.88 0 0 0-.37.48Z"/>
+              </svg>
+            </span>
+          </div>
+          <div>
+            <p class="strip-card__title" id="t_waTgStripTitle_how">WhatsApp &amp; Telegram entry</p>
+            <p class="strip-card__sub" id="t_waTgStripSub_how">for business and recommenders</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title" id="t_tripleTitle">Three Paths of Gratitude</h2>
+          <p class="section-sub" id="t_tripleSub">Choose how gratitude flows</p>
+        </div>
+
+        <div class="triple-grid">
+          <article class="feature-card">
+            <div class="feature-card__icon feature-card__icon--blue">
+              <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M13 3h-2v18h2"/>
+                <path class="icon-stroke" d="M16.5 7.5c0-2-1.8-3.5-4.5-3.5S7.5 5.3 7.5 7.3c0 1.7 1.1 2.7 3.3 3.2l2.4.5c2.2.5 3.3 1.5 3.3 3.2 0 2-1.9 3.3-4.7 3.3S7 16.2 7 14"/>
+              </svg>
+            </div>
+            <div class="feature-card__copy">
+              <p class="feature-card__title" id="t_keepReward">Keep the reward</p>
+              <p class="feature-card__sub" id="t_keepRewardSub">Honest professional reward for your expertise.</p>
+            </div>
+            <svg class="feature-card__chevron" viewBox="0 0 20 20" aria-hidden="true">
+              <path class="icon-stroke" d="m7 5 5 5-5 5"/>
+            </svg>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card__icon feature-card__icon--green">
+              <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="m12 21-1.4-1.28C5 14.64 2 11.86 2 8.5A4.5 4.5 0 0 1 6.5 4C8.24 4 9.91 4.81 11 6.09 12.09 4.81 13.76 4 15.5 4A4.5 4.5 0 0 1 20 8.5c0 3.36-3 6.14-8.6 11.22Z"/>
+              </svg>
+            </div>
+            <div class="feature-card__copy">
+              <p class="feature-card__title" id="t_giftClient">Gift it to the client</p>
+              <p class="feature-card__sub" id="t_giftClientSub">Turn money into social capital and lasting gratitude.</p>
+            </div>
+            <svg class="feature-card__chevron" viewBox="0 0 20 20" aria-hidden="true">
+              <path class="icon-stroke" d="m7 5 5 5-5 5"/>
+            </svg>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card__icon feature-card__icon--purple">
+              <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M3 21h18"/>
+                <path class="icon-stroke" d="M5 21V9l7-4 7 4v12"/>
+                <path class="icon-stroke" d="M8 13h8"/>
+                <path class="icon-stroke" d="M8 17h8"/>
+                <path class="icon-stroke" d="M12 9v12"/>
+              </svg>
+            </div>
+            <div class="feature-card__copy">
+              <p class="feature-card__title" id="t_supportBusiness">Support the business</p>
+              <p class="feature-card__sub" id="t_supportBusinessSub">Leave the reward to a trusted business for growth.</p>
+            </div>
+            <svg class="feature-card__chevron" viewBox="0 0 20 20" aria-hidden="true">
+              <path class="icon-stroke" d="m7 5 5 5-5 5"/>
+            </svg>
+          </article>
+        </div>
+
+        <div class="role-mini-grid">
+          <a href="#legacyFormContainer" class="role-mini-card" data-cta="business">
+            <div class="role-mini-card__head">
+              <svg class="role-mini-card__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M3 21h18"/>
+                <path class="icon-stroke" d="M5 21V7l7-4 7 4v14"/>
+                <path class="icon-stroke" d="M9 11h1"/>
+                <path class="icon-stroke" d="M9 15h1"/>
+                <path class="icon-stroke" d="M14 11h1"/>
+                <path class="icon-stroke" d="M14 15h1"/>
+              </svg>
+              <span id="t_forBusinessTitle">For Business</span>
+            </div>
+            <p class="role-mini-card__sub" id="t_forBusinessSub">Build verified relationships and pay with confidence.</p>
+          </a>
+
+          <a href="#legacyFormContainer" class="role-mini-card" data-cta="agent">
+            <div class="role-mini-card__head">
+              <svg class="role-mini-card__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                <path class="icon-stroke" d="M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+              </svg>
+              <span id="t_forRecTitle">For Recommenders</span>
+            </div>
+            <p class="role-mini-card__sub" id="t_forRecSub">Recommend with clarity and earn with integrity.</p>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="trust-panel">
+          <div class="trust-lead">
+            <h2 class="section-title" id="t_infraTitle">Infrastructure of gratitude and trust</h2>
+            <svg class="trust-lead__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+              <path class="icon-stroke" d="m9 12 2 2 4-4"/>
+            </svg>
+            <p class="section-sub" id="t_infraSub">We don't touch your money — we make recommendations, outcomes, and gratitude transparent.</p>
+          </div>
+
+          <div class="trust-panel__grid">
+            <article class="trust-card">
+              <div class="trust-card__icon trust-card__icon--blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/>
+                  <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.9"/>
+                </svg>
+              </div>
+              <div class="trust-card__copy">
+                <p class="trust-card__title" id="t_transparentTrack">Transparent tracking</p>
+                <p class="trust-card__sub" id="t_transparentTrackSub">Real-time visibility into every recommendation and outcome.</p>
+              </div>
+            </article>
+
+            <article class="trust-card">
+              <div class="trust-card__icon trust-card__icon--blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+                  <path class="icon-stroke" d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+              <div class="trust-card__copy">
+                <p class="trust-card__title" id="t_verifiedOut">Verified outcomes</p>
+                <p class="trust-card__sub" id="t_verifiedOutSub">Every result is confirmed and recorded with proof.</p>
+              </div>
+            </article>
+
+            <article class="trust-card">
+              <div class="trust-card__icon trust-card__icon--blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M14 7a4 4 0 1 0-8 0 4 4 0 0 0 8 0Z"/>
+                  <path class="icon-stroke" d="M3 21v-2a4 4 0 0 1 4-4h2"/>
+                  <path class="icon-stroke" d="M16 19a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+                  <path class="icon-stroke" d="M16 15v2"/>
+                  <path class="icon-stroke" d="M15 16h2"/>
+                </svg>
+              </div>
+              <div class="trust-card__copy">
+                <p class="trust-card__title" id="t_gratitudePath">You choose the gratitude path</p>
+                <p class="trust-card__sub" id="t_gratitudePathSub">Businesses and recommenders choose how gratitude flows.</p>
+              </div>
+            </article>
+
+            <article class="trust-card">
+              <div class="trust-card__icon trust-card__icon--blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+                  <path class="icon-stroke" d="M14 2v6h6"/>
+                  <path class="icon-stroke" d="M8 13h8"/>
+                  <path class="icon-stroke" d="M8 17h5"/>
+                </svg>
+              </div>
+              <div class="trust-card__copy">
+                <p class="trust-card__title" id="t_recordsStatus">Platform records status, not money</p>
+                <p class="trust-card__sub" id="t_recordsStatusSub">We don't hold or move funds. We record, verify, and protect.</p>
+              </div>
+            </article>
+
+            <article class="trust-card">
+              <div class="trust-card__icon trust-card__icon--blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M4 19h16"/>
+                  <path class="icon-stroke" d="M7 16v-4"/>
+                  <path class="icon-stroke" d="M12 16V7"/>
+                  <path class="icon-stroke" d="M17 16v-8"/>
+                </svg>
+              </div>
+              <div class="trust-card__copy">
+                <p class="trust-card__title" id="t_trustIndex">Trust Index</p>
+                <p class="trust-card__sub" id="t_trustIndexSub">Built from real client confirmations, not opinions.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="trust-footer">
+            <svg class="trust-footer__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+            </svg>
+            <span id="t_trustFooter">Secure · Private · Verified · Built for trust</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="pricing-panel">
+          <div class="eyebrow">
+            <span class="eyebrow__dot"></span>
+            <span id="t_pricingEyebrow">Trust-based recommendation network</span>
+          </div>
+
+          <div class="section-header">
+            <h2 class="section-title" id="t_pricingTitle">Pricing for businesses</h2>
+            <div class="pricing-subline">
+              <svg class="pricing-subline__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+                <path class="icon-stroke" d="m9 12 2 2 4-4"/>
+              </svg>
+              <span id="t_pricingFreeRec">Recommenders join free</span>
+            </div>
+          </div>
+
+          <div class="tier-grid">
+            <article class="tier-card">
+              <div class="tier-card__head">
+                <h3 class="tier-card__name" id="t_tierStandard">Standard</h3>
+              </div>
+              <div class="tier-list">
+                <div class="tier-row">
+                  <span class="tier-row__period" id="t_period1m_standard">1 month</span>
+                  <span class="tier-row__price num">99 <small>₪ / $29</small></span>
+                </div>
+                <div class="tier-row">
+                  <span class="tier-row__period" id="t_period6m_standard">6 months</span>
+                  <span class="tier-row__price num">499 <small>₪ / $149</small></span>
+                </div>
+                <div class="tier-row">
+                  <span class="tier-row__period" id="t_period12m_standard">12 months</span>
+                  <span class="tier-row__price num">899 <small>₪ / $279</small></span>
+                </div>
+              </div>
+            </article>
+
+            <article class="tier-card tier-card--pro">
+              <div class="tier-card__head">
+                <h3 class="tier-card__name" id="t_tierPro">PRO</h3>
+                <span class="tier-card__badge">PRO</span>
+              </div>
+              <div class="tier-list">
+                <div class="tier-row">
+                  <span class="tier-row__period" id="t_period1m_pro">1 month</span>
+                  <span class="tier-row__price num">149 <small>₪ / $49</small></span>
+                </div>
+                <div class="tier-row">
+                  <span class="tier-row__period" id="t_period6m_pro">6 months</span>
+                  <span class="tier-row__price num">749 <small>₪ / $249</small></span>
+                </div>
+                <div class="tier-row">
+                  <span class="tier-row__period" id="t_period12m_pro">12 months</span>
+                  <span class="tier-row__price num">1349 <small>₪ / $449</small></span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="pricing-features">
+            <article class="pricing-feature">
+              <div class="pricing-feature__icon pricing-feature__icon--blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M22 11.08V12a10 10 0 1 1-5.92-9.14"/>
+                  <path class="icon-stroke" d="m9 11 3 3L22 4"/>
+                </svg>
+              </div>
+              <div class="pricing-feature__copy">
+                <p class="pricing-feature__title" id="t_payClosed">Pay only for closed deals</p>
+                <p class="pricing-feature__sub" id="t_payClosedSub">No upfront fees. Success-based pricing.</p>
+              </div>
+            </article>
+
+            <article class="pricing-feature">
+              <div class="pricing-feature__icon pricing-feature__icon--blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M4 19h16"/>
+                  <path class="icon-stroke" d="M7 16v-3"/>
+                  <path class="icon-stroke" d="M12 16V9"/>
+                  <path class="icon-stroke" d="M17 16V5"/>
+                  <path class="icon-stroke" d="m5 10 4-4 3 3 6-6"/>
+                </svg>
+              </div>
+              <div class="pricing-feature__copy">
+                <p class="pricing-feature__title" id="t_transparentDeals">Transparent tracking</p>
+                <p class="pricing-feature__sub" id="t_transparentDealsSub">Real-time visibility into every deal.</p>
+              </div>
+            </article>
+
+            <article class="pricing-feature">
+              <div class="pricing-feature__icon pricing-feature__icon--blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M12 3 5 6v5c0 5 3.4 8.8 7 10 3.6-1.2 7-5 7-10V6Z"/>
+                </svg>
+              </div>
+              <div class="pricing-feature__copy">
+                <p class="pricing-feature__title" id="t_trustVisible">Trust Index visibility</p>
+                <p class="pricing-feature__sub" id="t_trustVisibleSub">Show your reputation. Win more trust.</p>
+              </div>
+            </article>
+
+            <article class="pricing-feature">
+              <div class="pricing-feature__icon pricing-feature__icon--blue">
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                  <path d="M27.2 4.78A15.8 15.8 0 0 0 4.77 27.2L3 32l4.93-1.72A15.8 15.8 0 1 0 27.2 4.78Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M19.11 17.23c-.28-.14-1.64-.81-1.9-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.89 1.09-.16.19-.33.21-.61.07-.28-.14-1.2-.44-2.28-1.41-.85-.76-1.42-1.7-1.58-1.99-.17-.28-.02-.43.12-.57.13-.13.28-.33.42-.49.14-.16.18-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.62-1.49-.85-2.05-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.47.07-.72.35-.25.28-.95.93-.95 2.27 0 1.34.97 2.64 1.11 2.82.14.19 1.9 2.9 4.6 4.07.64.28 1.14.45 1.53.58.64.2 1.23.17 1.69.1.52-.08 1.64-.67 1.87-1.32.23-.65.23-1.21.16-1.32-.06-.12-.25-.19-.53-.33Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="pricing-feature__copy">
+                <p class="pricing-feature__title" id="t_waTgEntry">WhatsApp &amp; Telegram entry</p>
+                <p class="pricing-feature__sub" id="t_waTgEntrySub">Reach recommenders where they are.</p>
+              </div>
+            </article>
+          </div>
+
+          <article class="pricing-featured">
+            <div class="pricing-featured__icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M12 2v4"/>
+                <path class="icon-stroke" d="M12 18v4"/>
+                <path class="icon-stroke" d="M4.93 4.93 7.76 7.76"/>
+                <path class="icon-stroke" d="m16.24 16.24 2.83 2.83"/>
+                <path class="icon-stroke" d="M2 12h4"/>
+                <path class="icon-stroke" d="M18 12h4"/>
+                <path class="icon-stroke" d="m4.93 19.07 2.83-2.83"/>
+                <path class="icon-stroke" d="m16.24 7.76 2.83-2.83"/>
+                <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.9"/>
+              </svg>
+            </div>
+            <div class="pricing-featured__copy">
+              <h3 class="pricing-featured__title">
+                <span id="t_salesForce">Turn loyal clients into your</span>
+                <span class="accent-text" id="t_salesForceAccent">strongest sales force.</span>
+              </h3>
+              <p class="pricing-featured__sub" id="t_salesForceSub">Win more deals. Build trust. Grow faster — with the power of real relationships.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="final-panel">
+          <div class="final-logo">
+            <svg class="final-logo__orbit" viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
+              <ellipse cx="200" cy="80" rx="160" ry="52" fill="none" stroke="currentColor" stroke-opacity=".38"/>
+              <circle cx="110" cy="56" r="2" fill="currentColor" fill-opacity=".58"/>
+              <circle cx="290" cy="56" r="2" fill="currentColor" fill-opacity=".58"/>
+              <circle cx="200" cy="28" r="2" fill="currentColor" fill-opacity=".58"/>
+            </svg>
+            <a href="/" class="brand final-logo__brand" aria-label="Win-Win Network">
+              <img src="/favicon-192.png"
+                   alt=""
+                   class="brand-mark"
+                   width="54"
+                   height="54"
+                   decoding="async"
+                   loading="eager">
+            </a>
+          </div>
+
+          <h2 class="final-panel__title">
+            <span id="t_finalTitle">Join the network</span>
+            <span class="accent-text" id="t_finalAccent">of trust.</span>
+          </h2>
+          <p class="section-sub" id="t_finalSub">Win more deals. Build trust. Grow faster — together. Be part of the trust ecosystem built for businesses and the people who recommend them.</p>
+
+          <div class="final-actions">
+            <a href="#legacyFormContainer" class="button button--primary" data-cta="business">
+              <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M3 21h18"/>
+                <path class="icon-stroke" d="M5 21V7l7-4 7 4v14"/>
+                <path class="icon-stroke" d="M9 11h1"/>
+                <path class="icon-stroke" d="M9 15h1"/>
+                <path class="icon-stroke" d="M14 11h1"/>
+                <path class="icon-stroke" d="M14 15h1"/>
+              </svg>
+              <span id="t_joinBusiness_final">Join as a Business</span>
+            </a>
+            <a href="#legacyFormContainer" class="button button--secondary" data-cta="agent">
+              <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path class="icon-stroke" d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                <path class="icon-stroke" d="M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+              </svg>
+              <span id="t_joinRecommender_final">Join as a Recommender</span>
+            </a>
+          </div>
+
+        </div>
+
+        <footer class="footer">
+          <nav class="footer-nav" aria-label="Footer primary">
+            <a href="#top" id="t_menuHome_footer">Home</a>
+            <a href="#how-it-works" id="t_menuHowWorks_footer">How it works</a>
+            <a href="#pricing" id="t_menuPricing_footer">Pricing</a>
+            <a href="about.html" id="t_menuAbout_footer">About</a>
+          </nav>
+
+          <nav class="footer-subnav" aria-label="Footer secondary">
+            <a href="about.html" id="t_menuTerms_footer">Terms</a>
+            <a href="about.html" id="t_menuPrivacy_footer">Privacy</a>
+          </nav>
+
+          <div class="footer-brand">
+            <a href="/" class="brand" aria-label="Win-Win Network">
+              <img src="/favicon-192.png"
+                   alt=""
+                   class="brand-mark"
+                   width="28"
+                   height="28"
+                   decoding="async"
+                   loading="eager">
+              <span class="brand-name">Win-Win Network</span>
+            </a>
+          </div>
+
+          <p class="footer-copy">© 2025 Win-Win Network. All rights reserved.</p>
+        </footer>
+      </div>
+    </section>
+
+    <section id="legacyFormContainer" class="legacy-form" hidden>
+      <div class="legacy-form__shell">
+        <div class="legacy-form__shim" aria-hidden="true"></div>
+
+        <div class="legacy-hidden-copy" hidden aria-hidden="true">
+          <p id="tagline"></p>
+          <a href="about.html" id="aboutLink"></a>
+          <p id="footerSub"></p>
+        </div>
+
+        <div class="field">
+          <label id="nameLabel">Your name or business name</label>
+          <input type="text" id="nameInput" placeholder="Enter name..." autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <label id="roleLabel">Join as:</label>
+          <div class="role-grid">
+            <label class="role-card" id="cardBusiness">
+              <input type="radio" name="role" value="business">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M3 21h18"/>
+                  <path class="icon-stroke" d="M5 21V7l7-4 7 4v14"/>
+                  <path class="icon-stroke" d="M9 11h1"/>
+                  <path class="icon-stroke" d="M9 15h1"/>
+                  <path class="icon-stroke" d="M14 11h1"/>
+                  <path class="icon-stroke" d="M14 15h1"/>
+                </svg>
+              </span>
+              <span class="role-name" id="roleBizName">Business Owner</span>
+              <span class="role-desc" id="roleBizDesc">I want to grow my client base</span>
+            </label>
+            <label class="role-card" id="cardAgent">
+              <input type="radio" name="role" value="agent">
+              <span class="icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path class="icon-stroke" d="M15 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                  <path class="icon-stroke" d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+                  <path class="icon-stroke" d="M19 8v6"/>
+                  <path class="icon-stroke" d="M16 11h6"/>
+                </svg>
+              </span>
+              <span class="role-name" id="roleAgentName">Happy Client</span>
+              <span class="role-desc" id="roleAgentDesc">I want to recommend</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="expandable" id="bizFields">
+          <div class="field">
+            <label id="nicheLabel">Business Category</label>
+            <select id="nicheSelect" onchange="updateIndexSubcategories()">
           <option value="" disabled selected id="nicheDefault">Выберите категорию...</option>
           <option value="Красота и эстетика">Красота и эстетика</option>
           <option value="Еда и рестораны">Еда и рестораны</option>
@@ -283,93 +3331,85 @@
           <option value="Туризм и отдых">Туризм и отдых</option>
           <option value="Бизнес и B2B услуги">Бизнес и B2B услуги</option>
         </select>
-      </div>
-      <div class="field" id="indexSubcatField" style="display:none;">
-        <label><span id="indexSubcatTitle">Специализация</span> <span id="indexSubcatHint" style="font-size:0.75rem;opacity:0.6;">(можно выбрать несколько)</span></label>
-        <div id="indexSubcatTags" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
-        <div id="indexSubcatList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
-        <button type="button" id="indexSubcatDone" onclick="confirmIndexSubcat()" style="width:100%;margin-top:14px;padding:14px;background:linear-gradient(135deg,#56CCF2,#2F80ED);border:none;color:#fff;font-weight:800;font-size:1rem;border-radius:14px;cursor:pointer;box-shadow:0 4px 16px rgba(86,204,242,0.3);">✅ Подтвердить выбор</button>
-        <button type="button" id="indexSubcatEdit" onclick="editIndexSubcat()" style="display:none;width:100%;margin-top:6px;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text-muted,#a0a0b0);font-size:0.85rem;border-radius:10px;cursor:pointer;">✏️ Изменить</button>
-        <input type="hidden" id="nicheSubSelect">
-      </div>
+          </div>
 
-      <div class="field">
-        <label id="rewardLabel">Бонус за рекомендацию</label>
-        <div class="seg-group">
-          <label class="seg"><input type="radio" name="rewardType" value="pct"><span id="rPct">% от сделки</span></label>
-          <label class="seg"><input type="radio" name="rewardType" value="fix"><span id="rFix">Фикс ₪</span></label>
-          <label class="seg"><input type="radio" name="rewardType" value="gift"><span id="rGift">Подарок/Услуга</span></label>
+          <div class="field" id="indexSubcatField" style="display:none;">
+            <label><span id="indexSubcatTitle">Specialization</span> <span id="indexSubcatHint" style="font-size:0.75rem;opacity:0.6;">(multiple choice)</span></label>
+            <div id="indexSubcatTags" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+            <div id="indexSubcatList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
+            <button type="button" id="indexSubcatDone" class="subcat-action subcat-action--primary" onclick="confirmIndexSubcat()">Confirm selection</button>
+            <button type="button" id="indexSubcatEdit" class="subcat-action subcat-action--secondary" onclick="editIndexSubcat()" style="display:none;margin-top:6px;">Edit</button>
+            <input type="hidden" id="nicheSubSelect">
+          </div>
+
+          <div class="field">
+            <label id="rewardLabel">Recommendation Bonus</label>
+            <div class="seg-group">
+              <label class="seg"><input type="radio" name="rewardType" value="pct"><span id="rPct">% of deal</span></label>
+              <label class="seg"><input type="radio" name="rewardType" value="fix"><span id="rFix">Fixed ₪</span></label>
+              <label class="seg"><input type="radio" name="rewardType" value="gift"><span id="rGift">Gift/Service</span></label>
+            </div>
+            <div class="reward-value-wrap" id="rewardValueWrap">
+              <input type="text" id="rewardValue" placeholder="Enter amount..." />
+            </div>
+          </div>
         </div>
-        <div class="reward-value-wrap" id="rewardValueWrap">
-          <input type="text" id="rewardValue" style="margin-top:0" placeholder="Укажите размер..." />
+
+        <div class="expandable" id="agentFields"></div>
+
+        <div class="expandable" id="commonFields">
+          <div hidden aria-hidden="true">
+            <div class="field">
+              <label id="payLabel">How do you prefer to receive the bonus?</label>
+              <div class="seg-group" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+                <label class="seg"><input type="radio" name="payMethod" value="bit">Bit</label>
+                <label class="seg"><input type="radio" name="payMethod" value="paypal">PayPal</label>
+                <label class="seg"><input type="radio" name="payMethod" value="transfer" checked><span id="payTransfer">Transfer</span></label>
+                <label class="seg"><input type="radio" name="payMethod" value="cash"><span id="payCash">Cash</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="socialLabel">Website / social link <span style="color:var(--text-3);font-weight:500">(optional)</span></label>
+            <input type="url" id="socialInput" placeholder="Instagram, Facebook, website..." />
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="channel-title" id="channelTitle">Choose your preferred channel</div>
+          <div class="channel-btns">
+            <button class="btn-wa" id="btnWa" disabled>
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+                <path d="M19.11 17.23c-.28-.14-1.64-.81-1.9-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.89 1.09-.16.19-.33.21-.61.07-.28-.14-1.2-.44-2.28-1.41-.85-.76-1.42-1.7-1.58-1.99-.17-.28-.02-.43.12-.57.13-.13.28-.33.42-.49.14-.16.18-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.62-1.49-.85-2.05-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.47.07-.72.35-.25.28-.95.93-.95 2.27 0 1.34.97 2.64 1.11 2.82.14.19 1.9 2.9 4.6 4.07.64.28 1.14.45 1.53.58.64.2 1.23.17 1.69.1.52-.08 1.64-.67 1.87-1.32.23-.65.23-1.21.16-1.32-.06-.12-.25-.19-.53-.33Z"/>
+                <path d="M27.2 4.78A15.8 15.8 0 0 0 4.77 27.2L3 32l4.93-1.72A15.8 15.8 0 1 0 27.2 4.78Zm-11.4 25a13.08 13.08 0 0 1-6.67-1.83l-.48-.29-2.93 1.02.99-2.86-.31-.49A13.06 13.06 0 1 1 15.8 29.78Z"/>
+              </svg>
+              <span id="waLabel">Join via WhatsApp</span>
+            </button>
+
+            <button class="btn-tg" id="btnTg" disabled>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M21.94 4.67c.18-.84-.62-1.53-1.4-1.2L2.24 10.7c-.86.34-.81 1.58.07 1.85l4.64 1.45 1.8 5.59c.25.78 1.24 1.01 1.82.42l2.59-2.63 4.95 3.65c.78.58 1.88.15 2.06-.8l1.77-15.56ZM9.16 13.55l9.27-7.02-7.28 8.39a.88.88 0 0 0-.18.36l-.72 2.95-1.09-3.37a.86.86 0 0 0-.57-.55l-2.76-.86 13.6-5.4-9.9 7.5a.88.88 0 0 0-.37.48Z"/>
+              </svg>
+              <span id="tgLabel">Join via Telegram</span>
+            </button>
+          </div>
         </div>
+
       </div>
-    </div>
-
-    <div class="expandable" id="agentFields"></div>
-
-    <div class="expandable" id="commonFields">
-      <div class="field">
-        <label id="payLabel">Как вы предпочитаете получить бонус?</label>
-        <div class="seg-group">
-          <label class="seg"><input type="radio" name="payMethod" value="bit">Bit</label>
-          <label class="seg"><input type="radio" name="payMethod" value="paypal">PayPal</label>
-          <label class="seg"><input type="radio" name="payMethod" value="transfer"><span id="payTransfer">Перевод</span></label>
-          <label class="seg"><input type="radio" name="payMethod" value="cash"><span id="payCash">Наличные</span></label>
-        </div>
-      </div>
-
-      <div class="field" style="margin-bottom: 0;">
-        <label id="socialLabel">Ссылка на сайт / соцсеть <span style="color:var(--text-muted);font-weight:400">(необязательно)</span></label>
-        <input type="url" id="socialInput" placeholder="Instagram, Facebook, сайт..." />
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="channel-title" id="channelTitle">Выберите удобный канал связи</div>
-      <div class="channel-btns">
-        <button class="btn-wa" id="btnWa" disabled>
-          <svg width="22" height="22" viewBox="0 0 32 32" fill="currentColor">
-            <path d="M19.11 17.23c-.28-.14-1.64-.81-1.9-.9-.25-.09-.44-.14-.62.14-.19.28-.72.9-.89 1.09-.16.19-.33.21-.61.07-.28-.14-1.2-.44-2.28-1.41-.85-.76-1.42-1.7-1.58-1.99-.17-.28-.02-.43.12-.57.13-.13.28-.33.42-.49.14-.16.18-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.62-1.49-.85-2.05-.22-.53-.45-.46-.62-.47h-.53c-.18 0-.47.07-.72.35-.25.28-.95.93-.95 2.27 0 1.34.97 2.64 1.11 2.82.14.19 1.9 2.9 4.6 4.07.64.28 1.14.45 1.53.58.64.2 1.23.17 1.69.1.52-.08 1.64-.67 1.87-1.32.23-.65.23-1.21.16-1.32-.06-.12-.25-.19-.53-.33Z"/>
-            <path d="M27.2 4.78A15.8 15.8 0 0 0 4.77 27.2L3 32l4.93-1.72A15.8 15.8 0 1 0 27.2 4.78Zm-11.4 25a13.08 13.08 0 0 1-6.67-1.83l-.48-.29-2.93 1.02.99-2.86-.31-.49A13.06 13.06 0 1 1 15.8 29.78Z"/>
-          </svg>
-          <span id="waLabel">Присоединиться через WhatsApp</span>
-        </button>
-        
-        <button class="btn-tg" id="btnTg" disabled>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M21.94 4.67c.18-.84-.62-1.53-1.4-1.2L2.24 10.7c-.86.34-.81 1.58.07 1.85l4.64 1.45 1.8 5.59c.25.78 1.24 1.01 1.82.42l2.59-2.63 4.95 3.65c.78.58 1.88.15 2.06-.8l1.77-15.56ZM9.16 13.55l9.27-7.02-7.28 8.39a.88.88 0 0 0-.18.36l-.72 2.95-1.09-3.37a.86.86 0 0 0-.57-.55l-2.76-.86 13.6-5.4-9.9 7.5a.88.88 0 0 0-.37.48Z"/>
-          </svg>
-          <span id="tgLabel">Присоединиться через Telegram</span>
-        </button>
-      </div>
-
-  </section>
-  
-  <div class="qr-section">
-    <div class="qr-section-title" id="qrTitle">Показать рядом стоящему</div>
-    <div class="qr-card">
-      <div id="qrcode"></div>
-    </div>
-    <p class="qr-hint" id="qrHint">Пусть сканирует — попадёт на эту же страницу</p>
-  </div>
-
-  <footer class="footer">
-    <div>Win-Win Network © 2025</div>
-    <div id="footerSub" class="footer-note">Бесплатно для рекомендателей • Эффективно для бизнеса</div>
-  </footer>
-
-</main>
-
-<script>
+    </section>
+  </main>
+</div><script>
 (function() {
   "use strict";
 
+  // ── Параметры из URL ──────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
-  const senderId = params.get("ref") || params.get("sender") || "";
+  
+  // Берем язык из URL, если он есть
   let initialLang = params.get("lang");
 
-  // Тексты с новыми, дружелюбными формулировками
+  // ── Тексты с новыми, дружелюбными формулировками ──────────────────
   const T = {
     ru: {
       dir: "ltr", lang: "ru",
@@ -377,37 +3417,119 @@
       aboutLink: "Как это работает?",
       nameLabel: "Ваше имя или название бизнеса",
       namePh: "Введите имя...",
-      name_ph: "Введите имя...",
       roleLabel: "Присоединиться как:",
       roleBizName: "Владелец бизнеса", roleBizDesc: "Хочу увеличить базу клиентов",
-      roleAgentName: "Довольный клиент", roleAgentDesc: "Хочу рекомендовать",
+      roleAgentName: "Рекомендатель", roleAgentDesc: "Хочу рекомендовать",
       nicheLabel: "Категория бизнеса", nicheDefault: "Выберите категорию...",
-      cat_placeholder: "Выберите категорию...",
-      rewardLabel: "Бонус за рекомендацию",
-      rPct: "% от сделки", rFix: "Фикс ₪", rGift: "Подарок/Услуга",
-      rewardPh: "Укажите размер...",
-      reward_ph: "Например: 15 (для %) или 200 (для ₪)",
-      payLabelAgent: "Как вы предпочитаете получить бонус?",
-      payLabelBiz: "Способ выплаты бонуса",
-      pay_agent: "Как вы предпочитаете получить бонус?",
-      pay_biz: "Способ выплаты бонуса",
-      payTransfer: "Перевод", payCash: "Наличные",
-      trans: "Перевод", cash: "Наличные",
-      socialLabel: "Ссылка на сайт / соцсеть",
-      socialPh: "Instagram, Facebook, сайт...",
-      social_ph: "Instagram, Facebook, сайт...",
       niche_sub_label: "Специализация",
       subcat_hint: "(можно выбрать несколько)",
       subcat_confirm: "✅ Подтвердить выбор",
       subcat_edit: "✏️ Изменить",
+      rewardLabel: "Бонус за рекомендацию",
+      rPct: "% от сделки", rFix: "Фикс ₪", rGift: "Подарок/Услуга",
+      rewardPh: "Укажите размер...",
+      payLabelAgent: "Как вы предпочитаете получить бонус?",
+      payLabelBiz: "Способ выплаты бонуса",
+      payTransfer: "Перевод", payCash: "Наличные",
+      socialLabel: "Ссылка на сайт / соцсеть",
+      socialPh: "Instagram, Facebook, сайт...",
       channelTitle: "Выберите удобный канал связи",
-      channel_title: "Выберите удобный канал связи",
-      categories: ["Красота и эстетика","Еда и рестораны","Магазины и товары","Здоровье и медицина","Юриспруденция","Недвижимость и финансы","Дом и ремонт","Автомобили","Праздники и мероприятия","Обучение и спорт","Домашние питомцы","Туризм и отдых","Бизнес и B2B услуги"],
       waLabel: "Присоединиться через WhatsApp",
       tgLabel: "Присоединиться через Telegram",
-      qrTitle: "Показать рядом стоящему",
-      qrHint: "Пусть сканирует — попадёт на эту же страницу",
       footerSub: "Бесплатно для рекомендателей • Эффективно для бизнеса",
+      eyebrowNetwork: "Сеть рекомендаций на доверии",
+      heroTitle1: "Рекомендации, сделки и доверие —",
+      heroTitleAccent: "в одной прозрачной системе.",
+      heroSub: "Помогаем бизнесам и рекомендателям управлять реферальными сделками, выплатами и доверием — открыто и безопасно. Реальные отношения. Подтверждённые сделки. Выигрывают все.",
+      joinBusiness: "Я бизнес",
+      joinRecommender: "Я рекомендатель",
+      waTgStripTitle: "Работает в WhatsApp и Telegram",
+      waTgStripSub: "для бизнесов и рекомендателей",
+      howTitle: "Как работает Win-Win",
+      howSub: "От рекомендации до благодарности — всё под контролем",
+      step1Title: "Рекомендация",
+      step1Body: "Вы соединяете подходящих людей.",
+      step2Title: "Сделка в работе",
+      step2Body: "Мы безопасно отслеживаем сделку в реальном времени.",
+      step3Title: "Сделка состоялась",
+      step3Body: "Сделка с клиентом успешно завершена.",
+      step4Title: "Благодарность отправлена",
+      step4Body: "Бонус идёт по выбранному вами пути.",
+      tripleTitle: "Три пути благодарности",
+      tripleSub: "Выберите, как работает благодарность",
+      keepReward: "Забрать бонус",
+      keepRewardSub: "Честное профессиональное вознаграждение за вашу экспертизу.",
+      giftClient: "Подарить клиенту",
+      giftClientSub: "Превратите деньги в социальный капитал и долгую благодарность.",
+      supportBusiness: "Поддержать бизнес",
+      supportBusinessSub: "Оставьте бонус доверенному бизнесу для его роста.",
+      forBusinessTitle: "Для бизнеса",
+      forBusinessSub: "Стройте проверенные отношения и платите с уверенностью.",
+      forRecTitle: "Для рекомендателей",
+      forRecSub: "Рекомендуйте честно — зарабатывайте с достоинством.",
+      infraClosingTitle: "Инфраструктура благодарности и доверия.",
+      infraClosingSub: "Прозрачное отслеживание. Подтверждённые результаты. Реальные отношения, которые накапливаются.",
+      infraTitle: "Инфраструктура благодарности и доверия",
+      infraSub: "Мы не касаемся ваших денег — мы делаем рекомендации, результаты и благодарность прозрачными.",
+      transparentTrack: "Прозрачный учёт",
+      transparentTrackSub: "Видимость в реальном времени по каждой рекомендации и результату.",
+      verifiedOut: "Подтверждённые результаты",
+      verifiedOutSub: "Каждый результат подтверждается и фиксируется с доказательством.",
+      gratitudePath: "Вы выбираете путь благодарности",
+      gratitudePathSub: "Бизнесы и рекомендатели сами решают, как идёт благодарность.",
+      recordsStatus: "Платформа фиксирует статус, не деньги",
+      recordsStatusSub: "Мы не держим и не двигаем средства. Мы фиксируем, проверяем и защищаем.",
+      trustIndex: "Индекс доверия",
+      trustIndexSub: "Строится на реальных подтверждениях клиентов, а не на мнениях.",
+      trustFooter: "Безопасно · Конфиденциально · Подтверждено · Создано для доверия",
+      pricingEyebrow: "Сеть рекомендаций на доверии",
+      pricingTitle: "Тарифы для бизнеса",
+      pricingFreeRec: "Рекомендатели — бесплатно",
+      tierStandard: "Стандарт",
+      tierPro: "PRO",
+      period1m: "1 месяц",
+      period6m: "6 месяцев",
+      period12m: "12 месяцев",
+      payClosed: "Платите только за закрытые сделки",
+      payClosedSub: "Никаких предоплат. Ценообразование по результату.",
+      transparentDeals: "Прозрачный учёт",
+      transparentDealsSub: "Видимость в реальном времени по каждой сделке.",
+      trustVisible: "Видимый Индекс доверия",
+      trustVisibleSub: "Покажите репутацию — заслужите больше доверия.",
+      waTgEntry: "WhatsApp и Telegram — точка входа",
+      waTgEntrySub: "Достучитесь до рекомендателей там, где они уже есть.",
+      salesForce: "Превратите лояльных клиентов в",
+      salesForceAccent: "вашу сильнейшую команду продаж.",
+      salesForceSub: "Больше сделок. Больше доверия. Быстрее рост — на силе настоящих отношений.",
+      seeHow: "Как это работает",
+      finalTitle: "Присоединяйтесь к сети",
+      finalAccent: "доверия.",
+      finalSub: "Больше сделок. Больше доверия. Быстрее рост — вместе. Станьте частью экосистемы доверия для бизнесов и людей, которые их рекомендуют.",
+      menuHome: "Главная",
+      menuHowWorks: "Как это работает",
+      menuPricing: "Тарифы",
+      menuAbout: "О платформе",
+      menuSignIn: "Войти",
+      menuTerms: "Условия",
+      menuPrivacy: "Конфиденциальность",
+      langLabelRU: "Русский",
+      langLabelHE: "עברית",
+      langLabelEN: "English",
+      langLabelAR: "العربية",
+      heroMicro1: "Прозрачный поток сделок",
+      heroMicro1Sub: "Все видят одну правду.",
+      heroMicro2: "Понятные выплаты",
+      heroMicro2Sub: "Автоматическое отслеживание. Без задержек.",
+      heroMicro3: "Индекс доверия",
+      heroMicro3Sub: "Репутация, которую вы зарабатываете. Возможности, которые получаете.",
+      legacyOptional: "необязательно",
+      legacyChooseChannel: "Выберите удобный канал связи",
+      legacyJoinWa: "Присоединиться через WhatsApp",
+      legacyJoinTg: "Присоединиться через Telegram",
+      legacyShowNearby: "Показать рядом стоящему",
+      legacyQrHint: "Пусть отсканирует — попадёт на эту же страницу",
+      legacyConfirmSelection: "Подтвердить выбор",
+      legacyEdit: "Изменить",
     },
     en: {
       dir: "ltr", lang: "en",
@@ -415,37 +3537,119 @@
       aboutLink: "How it works?",
       nameLabel: "Your name or business name",
       namePh: "Enter name...",
-      name_ph: "Enter your name...",
       roleLabel: "Join as:",
       roleBizName: "Business Owner", roleBizDesc: "I want to grow my client base",
       roleAgentName: "Happy Client", roleAgentDesc: "I want to recommend",
       nicheLabel: "Business Category", nicheDefault: "Select category...",
-      cat_placeholder: "Select a category...",
-      rewardLabel: "Recommendation Bonus",
-      rPct: "% of deal", rFix: "Fixed ₪", rGift: "Gift/Service",
-      rewardPh: "Enter amount...",
-      reward_ph: "e.g. 15 (for %) or 200 (for ₪)",
-      payLabelAgent: "How do you prefer to receive the bonus?",
-      payLabelBiz: "How to pay the bonus",
-      pay_agent: "How do you prefer to receive the bonus?",
-      pay_biz: "How to pay the bonus",
-      payTransfer: "Transfer", payCash: "Cash",
-      trans: "Transfer", cash: "Cash",
-      socialLabel: "Website / social link",
-      socialPh: "Instagram, Facebook, website...",
-      social_ph: "Instagram, Facebook, website...",
       niche_sub_label: "Specialization",
       subcat_hint: "(multiple choice)",
       subcat_confirm: "✅ Confirm selection",
       subcat_edit: "✏️ Edit",
+      rewardLabel: "Recommendation Bonus",
+      rPct: "% of deal", rFix: "Fixed ₪", rGift: "Gift/Service",
+      rewardPh: "Enter amount...",
+      payLabelAgent: "How do you prefer to receive the bonus?",
+      payLabelBiz: "How to pay the bonus",
+      payTransfer: "Transfer", payCash: "Cash",
+      socialLabel: "Website / social link",
+      socialPh: "Instagram, Facebook, website...",
       channelTitle: "Choose your preferred channel",
-      channel_title: "Choose your preferred channel",
-      categories: ["Beauty & Aesthetics","Food & Restaurants","Shops & Goods","Health & Medicine","Legal Services","Real Estate & Finance","Home & Repair","Automotive","Events & Parties","Education & Sports","Pets","Tourism & Leisure","Business & B2B"],
       waLabel: "Join via WhatsApp",
       tgLabel: "Join via Telegram",
-      qrTitle: "Show to someone nearby",
-      qrHint: "They scan it — land on this page",
       footerSub: "Free for referrers • Effective for business",
+      eyebrowNetwork: "Trust-based recommendation network",
+      heroTitle1: "Recommendations, deals and trust —",
+      heroTitleAccent: "in one transparent system.",
+      heroSub: "We help businesses and recommenders manage referrals, deals, payouts and trust — clearly and securely. Real relationships. Verified deals. Everyone wins.",
+      joinBusiness: "Join as a Business",
+      joinRecommender: "Join as a Recommender",
+      waTgStripTitle: "WhatsApp & Telegram entry",
+      waTgStripSub: "for business and recommenders",
+      howTitle: "How Win-Win works",
+      howSub: "Track recommendations from intro to gratitude",
+      step1Title: "Recommend",
+      step1Body: "You introduce the right connection.",
+      step2Title: "Deal in progress",
+      step2Body: "We track the deal securely in real time.",
+      step3Title: "Deal completed",
+      step3Body: "The deal with the client was successful.",
+      step4Title: "Gratitude completed",
+      step4Body: "Reward is shared through your chosen path.",
+      tripleTitle: "Three Paths of Gratitude",
+      tripleSub: "Choose how gratitude flows",
+      keepReward: "Keep the reward",
+      keepRewardSub: "Honest professional reward for your expertise.",
+      giftClient: "Gift it to the client",
+      giftClientSub: "Turn money into social capital and lasting gratitude.",
+      supportBusiness: "Support the business",
+      supportBusinessSub: "Leave the reward to a trusted business for growth.",
+      forBusinessTitle: "For Business",
+      forBusinessSub: "Build verified relationships and pay with confidence.",
+      forRecTitle: "For Recommenders",
+      forRecSub: "Recommend with clarity and earn with integrity.",
+      infraClosingTitle: "Infrastructure of gratitude and trust.",
+      infraClosingSub: "Transparent tracking. Verified outcomes. Real relationships that compound.",
+      infraTitle: "Infrastructure of gratitude and trust",
+      infraSub: "We don't touch your money — we make recommendations, outcomes, and gratitude transparent.",
+      transparentTrack: "Transparent tracking",
+      transparentTrackSub: "Real-time visibility into every recommendation and outcome.",
+      verifiedOut: "Verified outcomes",
+      verifiedOutSub: "Every result is confirmed and recorded with proof.",
+      gratitudePath: "You choose the gratitude path",
+      gratitudePathSub: "Businesses and recommenders choose how gratitude flows.",
+      recordsStatus: "Platform records status, not money",
+      recordsStatusSub: "We don't hold or move funds. We record, verify, and protect.",
+      trustIndex: "Trust Index",
+      trustIndexSub: "Built from real client confirmations, not opinions.",
+      trustFooter: "Secure · Private · Verified · Built for trust",
+      pricingEyebrow: "Trust-based recommendation network",
+      pricingTitle: "Pricing for businesses",
+      pricingFreeRec: "Recommenders join free",
+      tierStandard: "Standard",
+      tierPro: "PRO",
+      period1m: "1 month",
+      period6m: "6 months",
+      period12m: "12 months",
+      payClosed: "Pay only for closed deals",
+      payClosedSub: "No upfront fees. Success-based pricing.",
+      transparentDeals: "Transparent tracking",
+      transparentDealsSub: "Real-time visibility into every deal.",
+      trustVisible: "Trust Index visibility",
+      trustVisibleSub: "Show your reputation. Win more trust.",
+      waTgEntry: "WhatsApp & Telegram entry",
+      waTgEntrySub: "Reach recommenders where they are.",
+      salesForce: "Turn loyal clients into your",
+      salesForceAccent: "strongest sales force.",
+      salesForceSub: "Win more deals. Build trust. Grow faster — with the power of real relationships.",
+      seeHow: "See how it works",
+      finalTitle: "Join the network",
+      finalAccent: "of trust.",
+      finalSub: "Win more deals. Build trust. Grow faster — together. Be part of the trust ecosystem built for businesses and the people who recommend them.",
+      menuHome: "Home",
+      menuHowWorks: "How it works",
+      menuPricing: "Pricing",
+      menuAbout: "About",
+      menuSignIn: "Sign in",
+      menuTerms: "Terms",
+      menuPrivacy: "Privacy",
+      langLabelRU: "Русский",
+      langLabelHE: "עברית",
+      langLabelEN: "English",
+      langLabelAR: "العربية",
+      heroMicro1: "Transparent deal flow",
+      heroMicro1Sub: "Everyone sees the same truth.",
+      heroMicro2: "Clear payouts",
+      heroMicro2Sub: "Automatic tracking. No delays.",
+      heroMicro3: "Trust Index",
+      heroMicro3Sub: "Reputation you earn. Opportunities you win.",
+      legacyOptional: "optional",
+      legacyChooseChannel: "Choose your preferred channel",
+      legacyJoinWa: "Join via WhatsApp",
+      legacyJoinTg: "Join via Telegram",
+      legacyShowNearby: "Show to someone nearby",
+      legacyQrHint: "They scan it — land on this page",
+      legacyConfirmSelection: "Confirm selection",
+      legacyEdit: "Edit",
     },
     he: {
       dir: "rtl", lang: "he",
@@ -453,37 +3657,119 @@
       aboutLink: "איך זה עובד?",
       nameLabel: "שמך או שם העסק",
       namePh: "הכניסו שם...",
-      name_ph: "הכניסו שם...",
       roleLabel: "הצטרפו כ:",
       roleBizName: "בעל עסק", roleBizDesc: "רוצה להגדיל את מאגר הלקוחות",
       roleAgentName: "לקוח מרוצה", roleAgentDesc: "רוצה להמליץ",
       nicheLabel: "קטגוריית עסק", nicheDefault: "בחרו קטגוריה...",
-      cat_placeholder: "בחרו קטגוריה...",
-      rewardLabel: "הטבה על המלצה",
-      rPct: "% מהעסקה", rFix: "סכום קבוע ₪", rGift: "מתנה/שירות",
-      rewardPh: "הכניסו גודל...",
-      reward_ph: "לדוגמה: 15 (לאחוז) או 200 (לסכום קבוע)",
-      payLabelAgent: "איך תרצו לקבל את ההטבה?",
-      payLabelBiz: "איך תעדיפו לשלם את ההטבה?",
-      pay_agent: "איך תרצו לקבל את ההטבה?",
-      pay_biz: "איך תעדיפו לשלם את ההטבה?",
-      payTransfer: "העברה", payCash: "מזומן",
-      trans: "העברה", cash: "מזומן",
-      socialLabel: "קישור לאתר / רשת חברתית",
-      socialPh: "Instagram, Facebook, אתר...",
-      social_ph: "Instagram, Facebook, אתר...",
       niche_sub_label: "התמחות",
       subcat_hint: "(אפשר לבחור כמה)",
       subcat_confirm: "✅ אישור בחירה",
       subcat_edit: "✏️ עריכה",
+      rewardLabel: "הטבה על המלצה",
+      rPct: "% מהעסקה", rFix: "סכום קבוע ₪", rGift: "מתנה/שירות",
+      rewardPh: "הכניסו גודל...",
+      payLabelAgent: "איך תרצו לקבל את ההטבה?",
+      payLabelBiz: "איך תעדיפו לשלם את ההטבה?",
+      payTransfer: "העברה", payCash: "מזומן",
+      socialLabel: "קישור לאתר / רשת חברתית",
+      socialPh: "Instagram, Facebook, אתר...",
       channelTitle: "בחרו ערוץ תקשורת נוח",
-      channel_title: "בחרו ערוץ תקשורת נוח",
-      categories: ["יופי ואסתטיקה","מוכן ומסעדות","חנויות ומוצרים","בריאות ורפואה","משפטים","נדלן ופיננסים","בית ושיפוצים","רכבים","אירועים ומירועים","חינוך וספורט","חיות מחמד","תיירות ונופש","עסקים ושירותי B2B"],
       waLabel: "הצטרפות דרך WhatsApp",
       tgLabel: "הצטרפות דרך Telegram",
-      qrTitle: "הראה לאדם לידך",
-      qrHint: "יסרוק — יגיע לדף הזה",
       footerSub: "חינם לממליצים • יעיל לעסקים",
+      eyebrowNetwork: "רשת המלצות מבוססת אמון",
+      heroTitle1: "המלצות, עסקאות ואמון —",
+      heroTitleAccent: "במערכת אחת שקופה.",
+      heroSub: "אנחנו עוזרים לעסקים ולממליצים לנהל הפניות, עסקאות, תשלומים ואמון — בבירור ובבטחה. קשרים אמיתיים. עסקאות מאומתות. כולם מרוויחים.",
+      joinBusiness: "הצטרפות כעסק",
+      joinRecommender: "הצטרפות כממליץ",
+      waTgStripTitle: "פועל ב-WhatsApp ו-Telegram",
+      waTgStripSub: "לעסקים ולממליצים",
+      howTitle: "איך Win-Win עובד",
+      howSub: "מההמלצה ועד התודה — הכול תחת בקרה",
+      step1Title: "המלצה",
+      step1Body: "אתם מקשרים בין האנשים הנכונים.",
+      step2Title: "העסקה בעיצומה",
+      step2Body: "אנחנו עוקבים אחר העסקה בזמן אמת ובאופן מאובטח.",
+      step3Title: "העסקה התקיימה",
+      step3Body: "העסקה עם הלקוח הסתיימה בהצלחה.",
+      step4Title: "התודה הושלמה",
+      step4Body: "התגמול מועבר במסלול שבחרתם.",
+      tripleTitle: "שלוש דרכי תודה",
+      tripleSub: "בחרו איך התודה זורמת",
+      keepReward: "לשמור את התגמול",
+      keepRewardSub: "תגמול מקצועי הוגן על המומחיות שלכם.",
+      giftClient: "להעניק ללקוח",
+      giftClientSub: "הפכו את הכסף להון חברתי ולתודה מתמשכת.",
+      supportBusiness: "לתמוך בעסק",
+      supportBusinessSub: "השאירו את התגמול לעסק מהימן לצמיחה.",
+      forBusinessTitle: "לעסקים",
+      forBusinessSub: "בנו קשרים מאומתים ושלמו בביטחון.",
+      forRecTitle: "לממליצים",
+      forRecSub: "המליצו בבירור והרוויחו ביושרה.",
+      infraClosingTitle: "תשתית של תודה ואמון.",
+      infraClosingSub: "מעקב שקוף. תוצאות מאומתות. קשרים אמיתיים שמצטברים.",
+      infraTitle: "תשתית של תודה ואמון",
+      infraSub: "אנחנו לא נוגעים בכסף שלכם — אנחנו הופכים המלצות, תוצאות ותודות לשקופות.",
+      transparentTrack: "מעקב שקוף",
+      transparentTrackSub: "נראות בזמן אמת לכל המלצה ותוצאה.",
+      verifiedOut: "תוצאות מאומתות",
+      verifiedOutSub: "כל תוצאה מאושרת ונרשמת עם הוכחה.",
+      gratitudePath: "אתם בוחרים את מסלול התודה",
+      gratitudePathSub: "עסקים וממליצים בוחרים איך התודה זורמת.",
+      recordsStatus: "הפלטפורמה מתעדת סטטוס, לא כסף",
+      recordsStatusSub: "אנחנו לא מחזיקים ולא מעבירים כספים. אנחנו מתעדים, מאמתים ומגנים.",
+      trustIndex: "מדד האמון",
+      trustIndexSub: "נבנה מאישורי לקוחות אמיתיים, לא מדעות.",
+      trustFooter: "מאובטח · פרטי · מאומת · בנוי לאמון",
+      pricingEyebrow: "רשת המלצות מבוססת אמון",
+      pricingTitle: "מחירים לעסקים",
+      pricingFreeRec: "ממליצים מצטרפים בחינם",
+      tierStandard: "סטנדרט",
+      tierPro: "PRO",
+      period1m: "חודש",
+      period6m: "6 חודשים",
+      period12m: "12 חודשים",
+      payClosed: "משלמים רק על עסקאות סגורות",
+      payClosedSub: "ללא תשלום מראש. תמחור לפי הצלחה.",
+      transparentDeals: "מעקב שקוף",
+      transparentDealsSub: "נראות בזמן אמת לכל עסקה.",
+      trustVisible: "נראות מדד האמון",
+      trustVisibleSub: "הציגו את המוניטין שלכם. זכו ביותר אמון.",
+      waTgEntry: "כניסה דרך WhatsApp ו-Telegram",
+      waTgEntrySub: "הגיעו לממליצים במקום שבו הם נמצאים.",
+      salesForce: "הפכו לקוחות נאמנים ל-",
+      salesForceAccent: "צוות המכירות החזק ביותר שלכם.",
+      salesForceSub: "יותר עסקאות. יותר אמון. צמיחה מהירה יותר — בכוח של קשרים אמיתיים.",
+      seeHow: "איך זה עובד",
+      finalTitle: "הצטרפו לרשת",
+      finalAccent: "האמון.",
+      finalSub: "יותר עסקאות. יותר אמון. צמיחה מהירה יותר — יחד. היו חלק ממערכת האקולוגיה של האמון, לעסקים ולאנשים שממליצים עליהם.",
+      menuHome: "ראשי",
+      menuHowWorks: "איך זה עובד",
+      menuPricing: "מחירים",
+      menuAbout: "אודות",
+      menuSignIn: "כניסה",
+      menuTerms: "תנאים",
+      menuPrivacy: "פרטיות",
+      langLabelRU: "Русский",
+      langLabelHE: "עברית",
+      langLabelEN: "English",
+      langLabelAR: "العربية",
+      heroMicro1: "זרימת עסקאות שקופה",
+      heroMicro1Sub: "כולם רואים את אותה האמת.",
+      heroMicro2: "תשלומים ברורים",
+      heroMicro2Sub: "מעקב אוטומטי. ללא עיכובים.",
+      heroMicro3: "מדד האמון",
+      heroMicro3Sub: "המוניטין שאתם בונים. ההזדמנויות שאתם זוכים בהן.",
+      legacyOptional: "לא חובה",
+      legacyChooseChannel: "בחרו ערוץ תקשורת נוח",
+      legacyJoinWa: "הצטרפות דרך WhatsApp",
+      legacyJoinTg: "הצטרפות דרך Telegram",
+      legacyShowNearby: "הראו לאדם לידכם",
+      legacyQrHint: "שיסרוק — יגיע לדף הזה",
+      legacyConfirmSelection: "אישור בחירה",
+      legacyEdit: "עריכה",
     },
     ar: {
       dir: "rtl", lang: "ar",
@@ -491,40 +3777,123 @@
       aboutLink: "كيف يعمل؟",
       nameLabel: "اسمك أو اسم العمل",
       namePh: "أدخل الاسم...",
-      name_ph: "أدخل الاسم...",
       roleLabel: "انضم كـ:",
       roleBizName: "صاحب العمل", roleBizDesc: "أريد زيادة قاعدة العملاء",
       roleAgentName: "عميل راضٍ", roleAgentDesc: "أريد التوصية",
       nicheLabel: "فئة العمل", nicheDefault: "اختر فئة...",
-      cat_placeholder: "اختر فئة...",
-      rewardLabel: "مكافأة التوصية",
-      rPct: "% من الصفقة", rFix: "مبلغ ثابت ₪", rGift: "هدية/خدمة",
-      rewardPh: "أدخل المبلغ...",
-      reward_ph: "مثال: 15 (للنسبة) أو 200 (للمبلغ الثابت)",
-      payLabelAgent: "كيف تفضل استلام المكافأة؟",
-      payLabelBiz: "كيف تفضل دفع المكافأة؟",
-      pay_agent: "كيف تفضل استلام المكافأة؟",
-      pay_biz: "كيف تفضل دفع المكافأة؟",
-      payTransfer: "تحويل", payCash: "نقداً",
-      trans: "تحويل", cash: "نقداً",
-      socialLabel: "رابط الموقع / الشبكة الاجتماعية",
-      socialPh: "Instagram, Facebook, موقع...",
-      social_ph: "Instagram, Facebook, موقع...",
       niche_sub_label: "التخصص",
       subcat_hint: "(يمكن اختيار أكثر من واحد)",
       subcat_confirm: "✅ تأكيد الاختيار",
       subcat_edit: "✏️ تعديل",
+      rewardLabel: "مكافأة التوصية",
+      rPct: "% من الصفقة", rFix: "مبلغ ثابت ₪", rGift: "هدية/خدمة",
+      rewardPh: "أدخل المبلغ...",
+      payLabelAgent: "كيف تفضل استلام المكافأة؟",
+      payLabelBiz: "كيف تفضل دفع المكافأة؟",
+      payTransfer: "تحويل", payCash: "نقداً",
+      socialLabel: "رابط الموقع / الشبكة الاجتماعية",
+      socialPh: "Instagram, Facebook, موقع...",
       channelTitle: "اختر قناة التواصل المريحة",
-      channel_title: "اختر قناة التواصل المفضلة",
-      categories: ["الجمال والتجميل","الطعام والمطاعم","المتاجر والسلع","الصحة والطب","القانون","العقارات والمال","المنزل والإصلاح","السيارات","الفعاليات","التعليم والرياضة","الحيوانات الأليفة","السياحة والترفيه","الأعمال وخدمات B2B"],
       waLabel: "الانضمام عبر WhatsApp",
       tgLabel: "الانضمام عبر Telegram",
-      qrTitle: "أرِ الشخص المجاور",
-      qrHint: "يمسح — يصل لهذه الصفحة",
       footerSub: "مجاني للموصين • فعّال للأعمال",
+      eyebrowNetwork: "شبكة توصيات قائمة على الثقة",
+      heroTitle1: "التوصيات والصفقات والثقة —",
+      heroTitleAccent: "في منظومة واحدة شفافة.",
+      heroSub: "نساعد الشركات والموصين على إدارة الإحالات والصفقات والمدفوعات والثقة — بوضوح وأمان. علاقات حقيقية. صفقات موثقة. الجميع يفوز.",
+      joinBusiness: "انضم كنشاط تجاري",
+      joinRecommender: "انضم كموصٍ",
+      waTgStripTitle: "يعمل في WhatsApp و Telegram",
+      waTgStripSub: "للأنشطة التجارية والموصين",
+      howTitle: "كيف يعمل Win-Win",
+      howSub: "من التوصية إلى الشكر — كل شيء تحت السيطرة",
+      step1Title: "توصية",
+      step1Body: "أنت تجمع بين الأشخاص المناسبين.",
+      step2Title: "الصفقة قيد التنفيذ",
+      step2Body: "نتابع الصفقة بأمان في الوقت الفعلي.",
+      step3Title: "الصفقة تمت",
+      step3Body: "تمت الصفقة مع العميل بنجاح.",
+      step4Title: "اكتمل الشكر",
+      step4Body: "تُمنح المكافأة عبر المسار الذي اخترته.",
+      tripleTitle: "ثلاثة مسارات للشكر",
+      tripleSub: "اختر مسار الشكر",
+      keepReward: "احتفظ بالمكافأة",
+      keepRewardSub: "مكافأة مهنية عادلة مقابل خبرتك.",
+      giftClient: "اهدِها للعميل",
+      giftClientSub: "حوّل المال إلى رأس مال اجتماعي وامتنان دائم.",
+      supportBusiness: "ادعم النشاط التجاري",
+      supportBusinessSub: "اترك المكافأة لنشاط تجاري موثوق ليتطور.",
+      forBusinessTitle: "للأنشطة التجارية",
+      forBusinessSub: "ابنِ علاقات موثقة وادفع بثقة.",
+      forRecTitle: "للموصين",
+      forRecSub: "أوصِ بوضوح واكسب بنزاهة.",
+      infraClosingTitle: "بنية الشكر والثقة.",
+      infraClosingSub: "تتبّع شفاف. نتائج موثقة. علاقات حقيقية تتراكم.",
+      infraTitle: "بنية الشكر والثقة",
+      infraSub: "لا نلمس أموالك — نجعل التوصيات والنتائج والشكر شفافة.",
+      transparentTrack: "تتبّع شفاف",
+      transparentTrackSub: "رؤية فورية لكل توصية ونتيجة.",
+      verifiedOut: "نتائج موثقة",
+      verifiedOutSub: "كل نتيجة مؤكدة ومسجلة بإثبات.",
+      gratitudePath: "أنت تختار مسار الشكر",
+      gratitudePathSub: "الأنشطة التجارية والموصون يختارون مسار الشكر.",
+      recordsStatus: "المنصة تسجل الحالة، لا الأموال",
+      recordsStatusSub: "لا نحتفظ بالأموال ولا نحركها. نحن نسجل ونتحقق ونحمي.",
+      trustIndex: "مؤشر الثقة",
+      trustIndexSub: "يُبنى من تأكيدات العملاء الحقيقية، لا من الآراء.",
+      trustFooter: "آمن · خاص · موثّق · مبني للثقة",
+      pricingEyebrow: "شبكة توصيات قائمة على الثقة",
+      pricingTitle: "الأسعار للأنشطة التجارية",
+      pricingFreeRec: "ينضم الموصون مجاناً",
+      tierStandard: "ستاندرد",
+      tierPro: "PRO",
+      period1m: "شهر واحد",
+      period6m: "6 أشهر",
+      period12m: "12 شهراً",
+      payClosed: "ادفع فقط مقابل الصفقات المغلقة",
+      payClosedSub: "بدون رسوم مقدماً. التسعير على أساس النجاح.",
+      transparentDeals: "تتبّع شفاف",
+      transparentDealsSub: "رؤية فورية لكل صفقة.",
+      trustVisible: "ظهور مؤشر الثقة",
+      trustVisibleSub: "أظهر سمعتك. اكسب المزيد من الثقة.",
+      waTgEntry: "نقطة الدخول عبر WhatsApp و Telegram",
+      waTgEntrySub: "تواصل مع الموصين حيث هم بالفعل.",
+      salesForce: "حوّل عملاءك المخلصين إلى",
+      salesForceAccent: "أقوى فريق مبيعات لديك.",
+      salesForceSub: "صفقات أكثر. ثقة أعلى. نمو أسرع — بقوة العلاقات الحقيقية.",
+      seeHow: "كيف يعمل ذلك",
+      finalTitle: "انضم إلى شبكة",
+      finalAccent: "الثقة.",
+      finalSub: "صفقات أكثر. ثقة أعلى. نمو أسرع — معاً. كن جزءاً من منظومة الثقة للأنشطة التجارية ولمن يوصي بها.",
+      menuHome: "الرئيسية",
+      menuHowWorks: "كيف يعمل",
+      menuPricing: "الأسعار",
+      menuAbout: "من نحن",
+      menuSignIn: "تسجيل الدخول",
+      menuTerms: "الشروط",
+      menuPrivacy: "الخصوصية",
+      langLabelRU: "Русский",
+      langLabelHE: "עברית",
+      langLabelEN: "English",
+      langLabelAR: "العربية",
+      heroMicro1: "تدفّق صفقات شفاف",
+      heroMicro1Sub: "الجميع يرى الحقيقة نفسها.",
+      heroMicro2: "مدفوعات واضحة",
+      heroMicro2Sub: "تتبّع تلقائي. بدون تأخير.",
+      heroMicro3: "مؤشر الثقة",
+      heroMicro3Sub: "السمعة التي تكسبها. الفرص التي تحصل عليها.",
+      legacyOptional: "اختياري",
+      legacyChooseChannel: "اختر قناة التواصل المريحة",
+      legacyJoinWa: "الانضمام عبر WhatsApp",
+      legacyJoinTg: "الانضمام عبر Telegram",
+      legacyShowNearby: "اعرضه لمن بجوارك",
+      legacyQrHint: "ليمسحه — يصل لهذه الصفحة",
+      legacyConfirmSelection: "تأكيد الاختيار",
+      legacyEdit: "تعديل",
     },
   };
 
+  // ── Языки ─────────────────────────────────────────────────────────
   let currentLang = "ru";
   let selectedRole = null;
 
@@ -545,6 +3914,7 @@
     document.body.dir = t.dir;
 
     document.getElementById("tagline").innerHTML = t.tagline;
+    
     const aboutLink = document.getElementById("aboutLink");
     aboutLink.textContent = t.aboutLink;
     aboutLink.href = "about.html?lang=" + lang;
@@ -558,6 +3928,26 @@
     document.getElementById("roleAgentDesc").textContent = t.roleAgentDesc;
     document.getElementById("nicheLabel").textContent = t.nicheLabel;
     document.getElementById("nicheDefault").textContent = t.nicheDefault;
+    const _nicheSelEl = document.getElementById('nicheSelect');
+    if (_nicheSelEl) {
+      try {
+        if (TAXONOMY_LABELS && TAXONOMY_LABELS.categories) {
+          const _savedVal = _nicheSelEl.value;
+          const _placeholder = '<option value="" disabled selected id="nicheDefault">' + t.nicheDefault + '</option>';
+          const _options = Object.entries(TAXONOMY_LABELS.categories).map(function(entry) {
+            const ru = entry[0];
+            const trans = entry[1];
+            const label = (lang === 'ru') ? ru : (trans[lang] || ru);
+            return '<option value="' + ru + '">' + label + '</option>';
+          }).join('');
+          _nicheSelEl.innerHTML = _placeholder + _options;
+          if (_savedVal) _nicheSelEl.value = _savedVal;
+        }
+      } catch (_tdzErr) { /* TAXONOMY_LABELS not initialized yet on first call */ }
+    }
+    if (typeof updateIndexSubcategories === 'function' && _nicheSelEl && _nicheSelEl.value) {
+      updateIndexSubcategories();
+    }
     const _subTitle = document.getElementById("indexSubcatTitle");
     if (_subTitle) _subTitle.textContent = t.niche_sub_label;
     const _subHint = document.getElementById("indexSubcatHint");
@@ -566,34 +3956,6 @@
     if (_subDone) _subDone.textContent = t.subcat_confirm;
     const _subEdit = document.getElementById("indexSubcatEdit");
     if (_subEdit) _subEdit.textContent = t.subcat_edit;
-    const nicheSelEl = document.getElementById('nicheSelect');
-    if (nicheSelEl) {
-      try {
-        // TAXONOMY_LABELS is a const declared OUTSIDE this IIFE. On the first
-        // applyLang() call (executed before the IIFE ends) it's still in TDZ
-        // and any reference to it throws. We silently swallow that error — the
-        // select already has RU options from HTML, and on the next applyLang()
-        // (triggered by language-button click) TAXONOMY_LABELS is initialized
-        // and this block runs normally.
-        if (TAXONOMY_LABELS && TAXONOMY_LABELS.categories) {
-          const savedVal = nicheSelEl.value;
-          const placeholder = '<option value="" disabled selected id="nicheDefault">' + t.nicheDefault + '</option>';
-          const options = Object.entries(TAXONOMY_LABELS.categories).map(function(entry) {
-            const ru = entry[0];
-            const trans = entry[1];
-            const label = (lang === 'ru') ? ru : (trans[lang] || ru);
-            return '<option value="' + ru + '">' + label + '</option>';
-          }).join('');
-          nicheSelEl.innerHTML = placeholder + options;
-          if (savedVal) nicheSelEl.value = savedVal;
-        }
-      } catch (_tdzErr) { /* TAXONOMY_LABELS not ready yet — skip */ }
-    }
-    // Перерендер подкатегорий на новый язык, если категория выбрана
-    if (typeof updateIndexSubcategories === 'function' && document.getElementById('nicheSelect')) {
-      const curVal = document.getElementById('nicheSelect').value;
-      if (curVal) updateIndexSubcategories();
-    }
     document.getElementById("rewardLabel").textContent = t.rewardLabel;
     document.getElementById("rPct").textContent = t.rPct;
     document.getElementById("rFix").textContent = t.rFix;
@@ -609,9 +3971,100 @@
     document.getElementById("channelTitle").textContent = t.channelTitle;
     document.getElementById("waLabel").textContent = t.waLabel;
     document.getElementById("tgLabel").textContent = t.tgLabel;
-    document.getElementById("qrTitle").textContent = t.qrTitle;
-    document.getElementById("qrHint").textContent = t.qrHint;
     document.getElementById("footerSub").textContent = t.footerSub;
+    document.body.classList.toggle("rtl", t.dir === "rtl");
+    const e = id => document.getElementById(id);
+    const setText = function(ids, value) {
+      ids.forEach(function(id) {
+        if (e(id)) e(id).textContent = value;
+      });
+    };
+    const setHref = function(ids, value) {
+      ids.forEach(function(id) {
+        if (e(id)) e(id).href = value;
+      });
+    };
+    setText(['t_eyebrowNetwork_hero', 't_eyebrowNetwork_drawer'], t.eyebrowNetwork);
+    setText(['t_heroTitle1'], t.heroTitle1);
+    setText(['t_heroTitleAccent'], t.heroTitleAccent);
+    setText(['t_heroSub'], t.heroSub);
+    setText(['t_joinBusiness_hero', 't_joinBusiness_final'], t.joinBusiness);
+    setText(['t_joinRecommender_hero', 't_joinRecommender_final'], t.joinRecommender);
+    setText(['t_waTgStripTitle_how'], t.waTgStripTitle);
+    setText(['t_waTgStripSub_how'], t.waTgStripSub);
+    setText(['t_howTitle'], t.howTitle);
+    setText(['t_howSub'], t.howSub);
+    setText(['t_step1Title'], t.step1Title);
+    setText(['t_step1Body'], t.step1Body);
+    setText(['t_step2Title'], t.step2Title);
+    setText(['t_step2Body'], t.step2Body);
+    setText(['t_step3Title'], t.step3Title);
+    setText(['t_step3Body'], t.step3Body);
+    setText(['t_step4Title'], t.step4Title);
+    setText(['t_step4Body'], t.step4Body);
+    setText(['t_tripleTitle'], t.tripleTitle);
+    setText(['t_tripleSub'], t.tripleSub);
+    setText(['t_keepReward'], t.keepReward);
+    setText(['t_keepRewardSub'], t.keepRewardSub);
+    setText(['t_giftClient'], t.giftClient);
+    setText(['t_giftClientSub'], t.giftClientSub);
+    setText(['t_supportBusiness'], t.supportBusiness);
+    setText(['t_supportBusinessSub'], t.supportBusinessSub);
+    setText(['t_forBusinessTitle'], t.forBusinessTitle);
+    setText(['t_forBusinessSub'], t.forBusinessSub);
+    setText(['t_forRecTitle'], t.forRecTitle);
+    setText(['t_forRecSub'], t.forRecSub);
+    setText(['t_infraTitle'], t.infraTitle);
+    setText(['t_infraSub'], t.infraSub);
+    setText(['t_transparentTrack'], t.transparentTrack);
+    setText(['t_transparentTrackSub'], t.transparentTrackSub);
+    setText(['t_verifiedOut'], t.verifiedOut);
+    setText(['t_verifiedOutSub'], t.verifiedOutSub);
+    setText(['t_gratitudePath'], t.gratitudePath);
+    setText(['t_gratitudePathSub'], t.gratitudePathSub);
+    setText(['t_recordsStatus'], t.recordsStatus);
+    setText(['t_recordsStatusSub'], t.recordsStatusSub);
+    setText(['t_trustIndex'], t.trustIndex);
+    setText(['t_trustIndexSub'], t.trustIndexSub);
+    setText(['t_trustFooter'], t.trustFooter);
+    setText(['t_pricingEyebrow'], t.pricingEyebrow);
+    setText(['t_pricingTitle'], t.pricingTitle);
+    setText(['t_pricingFreeRec'], t.pricingFreeRec);
+    setText(['t_tierStandard'], t.tierStandard);
+    setText(['t_tierPro'], t.tierPro);
+    setText(['t_period1m_standard', 't_period1m_pro'], t.period1m);
+    setText(['t_period6m_standard', 't_period6m_pro'], t.period6m);
+    setText(['t_period12m_standard', 't_period12m_pro'], t.period12m);
+    setText(['t_payClosed'], t.payClosed);
+    setText(['t_payClosedSub'], t.payClosedSub);
+    setText(['t_transparentDeals'], t.transparentDeals);
+    setText(['t_transparentDealsSub'], t.transparentDealsSub);
+    setText(['t_trustVisible'], t.trustVisible);
+    setText(['t_trustVisibleSub'], t.trustVisibleSub);
+    setText(['t_waTgEntry'], t.waTgEntry);
+    setText(['t_waTgEntrySub'], t.waTgEntrySub);
+    setText(['t_salesForce'], t.salesForce);
+    setText(['t_salesForceAccent'], t.salesForceAccent);
+    setText(['t_salesForceSub'], t.salesForceSub);
+    setText(['t_finalTitle'], t.finalTitle);
+    setText(['t_finalAccent'], t.finalAccent);
+    setText(['t_finalSub'], t.finalSub);
+    setText(['t_menuHome_top', 't_menuHome_drawer', 't_menuHome_footer'], t.menuHome);
+    setText(['t_menuHowWorks_top', 't_menuHowWorks_drawer', 't_menuHowWorks_footer'], t.menuHowWorks);
+    setText(['t_menuPricing_top', 't_menuPricing_drawer', 't_menuPricing_footer'], t.menuPricing);
+    setText(['t_menuAbout_top', 't_menuAbout_drawer', 't_menuAbout_footer'], t.menuAbout);
+    setText(['t_menuSignIn_top', 't_menuSignIn_drawer', 't_menuSignIn_footer'], t.menuSignIn);
+    setText(['t_menuTerms_footer'], t.menuTerms);
+    setText(['t_menuPrivacy_footer'], t.menuPrivacy);
+    setText(['t_langLabelRU_desktop', 't_langLabelRU_drawer'], t.langLabelRU);
+    setText(['t_langLabelHE_desktop', 't_langLabelHE_drawer'], t.langLabelHE);
+    setText(['t_langLabelEN_desktop', 't_langLabelEN_drawer'], t.langLabelEN);
+    setText(['t_langLabelAR_desktop', 't_langLabelAR_drawer'], t.langLabelAR);
+    setHref(['navAboutDrawer', 't_menuAbout_top', 't_menuAbout_footer', 't_menuTerms_footer', 't_menuPrivacy_footer'], "about.html?lang=" + lang);
+    if (e('desktopLangCode')) e('desktopLangCode').textContent = String(lang || 'ru').toUpperCase();
+    if (e('navToggle')) e('navToggle').setAttribute('aria-label', t.menuHome + ' menu');
+    if (_subDone) _subDone.textContent = t.legacyConfirmSelection;
+    if (_subEdit) _subEdit.textContent = t.legacyEdit;
 
     document.querySelectorAll(".lang-btn").forEach(b => {
       b.classList.toggle("active", b.dataset.lang === lang);
@@ -622,26 +4075,25 @@
     b.addEventListener("click", () => applyLang(b.dataset.lang));
   });
 
+  // ── Роль ─────────────────────────────────────────────────────────
   document.querySelectorAll('input[name="role"]').forEach(radio => {
     radio.addEventListener("change", () => {
       selectedRole = radio.value;
+
       document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
       radio.closest(".role-card").classList.add("selected");
 
       const t = T[currentLang] || T.ru;
       document.getElementById("payLabel").textContent = selectedRole === "business" ? t.payLabelBiz : t.payLabelAgent;
 
-      if (selectedRole === "business") {
-        document.getElementById("bizFields").classList.add("open");
-      } else {
-        document.getElementById("bizFields").classList.remove("open");
-      }
+      document.getElementById("bizFields").classList.toggle("open", selectedRole === "business");
       document.getElementById("commonFields").classList.add("open");
 
       validate();
     });
   });
 
+  // ── Вознаграждение ────────────────────────────────────────────────
   document.querySelectorAll('input[name="rewardType"]').forEach(r => {
     r.addEventListener("change", () => {
       document.getElementById("rewardValueWrap").classList.add("open");
@@ -650,6 +4102,7 @@
   });
   document.getElementById("rewardValue").addEventListener("input", validate);
 
+  // ── Валидация ─────────────────────────────────────────────────────
   function isValid() {
     const name = document.getElementById("nameInput").value.trim();
     if (!name || !selectedRole) return false;
@@ -674,10 +4127,11 @@
     document.getElementById("btnTg").disabled = !ok;
   }
 
+  // ── Ссылки ────────────────────────────────────────────────────────
   function buildPayload() {
     const name    = document.getElementById("nameInput").value.trim();
-    const _nicheSubVal = document.getElementById('nicheSubSelect') ? document.getElementById('nicheSubSelect').value : '';
-    const niche   = _nicheSubVal || document.getElementById("nicheSelect").value;
+    const _subVal = document.getElementById('nicheSubSelect') ? document.getElementById('nicheSubSelect').value : '';
+    const niche   = _subVal || document.getElementById("nicheSelect").value;
     const category = document.getElementById("nicheSelect").value;
     const rType   = document.querySelector('input[name="rewardType"]:checked');
     const rVal    = document.getElementById("rewardValue").value.trim();
@@ -695,12 +4149,10 @@
       role: selectedRole,
       name: name,
       niche: niche || null,
-      category: category || null,
       commission: commission,
       pay_pref: pay ? pay.value : null,
       business_info: social || null,
       lang: currentLang,
-      sender: senderId,
       source_url: window.location.href,
     };
   }
@@ -729,7 +4181,7 @@
 
         const hints = {
           ru: "Добро пожаловать в Win-Win Network! Вы завершаете регистрацию. Нажмите отправить 👉",
-          en: "Welcome to Win-Win Network! You are completing your registration. Please tap Send 👉",
+          en: "Good day! You are completing your registration in Win-Win Network. Please tap Send 👉",
           he: "שלום! אתם משלימים את ההרשמה ל-Win-Win Network. לחצו שלח 👈",
           ar: "مرحباً! أنت تكمل تسجيلك في Win-Win Network. اضغط إرسال 👈"
         };
@@ -762,18 +4214,7 @@
     }
   });
 
-  const baseUrl = "https://winwinnetwork.pro/";
-  const qrUrl = senderId ? baseUrl + "?ref=" + encodeURIComponent(senderId) : baseUrl;
-
-  new QRCode(document.getElementById("qrcode"), {
-    text: qrUrl,
-    width: 200,
-    height: 200,
-    colorDark: "#0a0a0f",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H,
-  });
-
+  // ── Инициализация ─────────────────────────────────────────────────
   applyLang(detectLang());
 
 })();
@@ -908,87 +4349,106 @@
     return (lang === 'ru') ? subRu : (entry[lang] || subRu);
   }
 
-  function updateIndexSubcategories() {
-    const selectedRaw = document.getElementById('nicheSelect').value;
-    const catRu = resolveCategoryRu(selectedRaw);
-    const field = document.getElementById('indexSubcatField');
-    const list = document.getElementById('indexSubcatList');
-    const hidden = document.getElementById('nicheSubSelect');
-    const tags = document.getElementById('indexSubcatTags');
-    const doneBtn = document.getElementById('indexSubcatDone');
-    const editBtn = document.getElementById('indexSubcatEdit');
-    const subs = TAXONOMY_SOURCE[catRu] || [];
-    const lang = getCurrentIndexLang();
-    const prevChecked = new Set(Array.from(list.querySelectorAll('input:checked')).map(c => c.dataset.canonical));
-    list.innerHTML = '';
-    hidden.value = '';
-    tags.innerHTML = '';
-    tags.style.display = 'none';
-    if (doneBtn) doneBtn.style.display = 'block';
-    if (editBtn) editBtn.style.display = 'none';
-    if (!subs.length) {
-      field.style.display = 'none';
-      return;
+
+</script>
+<script>
+(function(){
+  // CTA → reveal legacy form, set role, scroll
+  const form = document.getElementById('legacyFormContainer');
+  function openForm(role) {
+    if (!form) return;
+    form.removeAttribute('hidden');
+    const radio = document.querySelector('input[name="role"][value="' + role + '"]');
+    if (radio && !radio.checked) {
+      radio.checked = true;
+      radio.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    subs.forEach(sRu => {
-      const translated = translateSubcategory(sRu, lang);
-      const item = document.createElement('label');
-      item.className = 'idx-cb-item';
-      const cb = document.createElement('input');
-      cb.type = 'checkbox'; cb.value = translated;
-      cb.dataset.canonical = sRu;
-      if (prevChecked.has(sRu)) {
-        cb.checked = true;
-        item.classList.add('checked');
-      }
-      cb.addEventListener('change', () => {
-        item.classList.toggle('checked', cb.checked);
-        const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
-        hidden.value = checked.join(', ');
-      });
-      const span = document.createElement('span');
-      span.textContent = translated;
-      item.appendChild(cb); item.appendChild(span);
-      list.appendChild(item);
+    requestAnimationFrame(function(){
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-    const checkedNow = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
-    hidden.value = checkedNow.join(', ');
-    field.style.display = 'block';
-    list.style.display = 'flex';
+  }
+  document.querySelectorAll('[data-cta="business"]').forEach(function(b){
+    b.addEventListener('click', function(e){ e.preventDefault(); openForm('business'); });
+  });
+  document.querySelectorAll('[data-cta="agent"]').forEach(function(b){
+    b.addEventListener('click', function(e){ e.preventDefault(); openForm('agent'); });
+  });
+
+  // Language dropdown open/close
+  const langDropdown = document.getElementById('langDropdown');
+  const langTrigger = document.getElementById('langTrigger');
+  const langMenu = document.getElementById('langMenu');
+  if (langDropdown && langTrigger && langMenu) {
+    function positionLangMenu(){
+      const rect = langTrigger.getBoundingClientRect();
+      const isRtl = document.body.dir === 'rtl';
+      const menuWidth = Math.min(264, window.innerWidth - 32);
+      const top = rect.bottom + 10;
+      let left;
+      if (isRtl) {
+        left = rect.left;
+      } else {
+        left = rect.right - menuWidth;
+      }
+      if (left < 16) left = 16;
+      if (left + menuWidth > window.innerWidth - 16) left = window.innerWidth - 16 - menuWidth;
+      langMenu.style.top = top + 'px';
+      langMenu.style.left = left + 'px';
+      langMenu.style.right = 'auto';
+    }
+    function openLangMenu(){
+      langMenu.removeAttribute('hidden');
+      positionLangMenu();
+      langDropdown.setAttribute('data-open', 'true');
+      langTrigger.setAttribute('aria-expanded', 'true');
+    }
+    function closeLangMenu(){
+      langMenu.setAttribute('hidden', '');
+      langDropdown.setAttribute('data-open', 'false');
+      langTrigger.setAttribute('aria-expanded', 'false');
+    }
+    langTrigger.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (langMenu.hasAttribute('hidden')) openLangMenu();
+      else closeLangMenu();
+    });
+    langMenu.querySelectorAll('.lang-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        setTimeout(closeLangMenu, 0);
+      });
+    });
+    document.addEventListener('click', function(e){
+      if (!langDropdown.contains(e.target) && !langMenu.contains(e.target)) closeLangMenu();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeLangMenu();
+    });
+    window.addEventListener('resize', function(){
+      if (!langMenu.hasAttribute('hidden')) positionLangMenu();
+    });
+    window.addEventListener('scroll', function(){
+      if (!langMenu.hasAttribute('hidden')) positionLangMenu();
+    }, { passive: true });
   }
 
-  function confirmIndexSubcat() {
-    const list = document.getElementById('indexSubcatList');
-    const tags = document.getElementById('indexSubcatTags');
-    const doneBtn = document.getElementById('indexSubcatDone');
-    const editBtn = document.getElementById('indexSubcatEdit');
-    const hidden = document.getElementById('nicheSubSelect');
-    const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
-    if (checked.length === 0) return;
-    hidden.value = checked.join(', ');  // ← главный фикс
-    tags.innerHTML = checked.map(s =>
-      `<span style="display:inline-block;background:rgba(86,204,242,0.15);border:1px solid rgba(86,204,242,0.4);color:#56CCF2;border-radius:20px;padding:4px 12px;font-size:0.85rem;font-weight:600;">${s}</span>`
-    ).join('');
-    tags.style.display = 'flex';
-    list.style.display = 'none';
-    doneBtn.style.display = 'none';
-    editBtn.style.display = 'block';
+  // Hamburger menu open/close
+  const burger = document.getElementById('navToggle');
+  const drawer = document.getElementById('navDrawer');
+  if (burger && drawer) {
+    burger.addEventListener('click', function(){
+      const isOpen = drawer.classList.toggle('is-open');
+      burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    drawer.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('click', function(){
+        drawer.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
   }
-
-  function editIndexSubcat() {
-    const list = document.getElementById('indexSubcatList');
-    const tags = document.getElementById('indexSubcatTags');
-    const doneBtn = document.getElementById('indexSubcatDone');
-    const editBtn = document.getElementById('indexSubcatEdit');
-    const hidden = document.getElementById('nicheSubSelect');
-    tags.style.display = 'none';
-    list.style.display = 'flex';
-    editBtn.style.display = 'none';
-    const checked = Array.from(list.querySelectorAll('input:checked')).map(c => c.value);
-    doneBtn.style.display = checked.length > 0 ? 'block' : 'none';
-    hidden.value = checked.join(', ');
-  }
-
+})();
 </script>
 </body>
 </html>
