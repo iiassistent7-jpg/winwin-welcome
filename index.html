@@ -669,6 +669,12 @@
       max-width: 100%;
       overflow-x: hidden;
     }
+    /* Tighter section gaps — was --s-10/12/14, reduced ~40% across all
+       breakpoints to remove the cavernous whitespace between blocks
+       without breaking visual rhythm. */
+    .section { padding-block: var(--s-6); }
+    @media (min-width: 768px)  { .section { padding-block: var(--s-8); } }
+    @media (min-width: 1024px) { .section { padding-block: var(--s-10); } }
 
     .section-card,
     .card,
@@ -1852,7 +1858,7 @@
       }
 
       .section {
-        padding-block: var(--s-12);
+        padding-block: var(--s-8);
       }
 
       .hero-orbit__image {
@@ -1894,7 +1900,7 @@
       }
 
       .section {
-        padding-block: 56px;
+        padding-block: var(--s-10);
       }
 
       .topbar__nav {
@@ -2062,11 +2068,11 @@
     }
 
     .page {
-      padding-block: 0 var(--s-12);
+      padding-block: 0 var(--s-8);
     }
 
     .section {
-      padding-block: var(--s-10);
+      padding-block: var(--s-6);
     }
 
     .hero.section {
@@ -2527,7 +2533,6 @@
     }
 
     @media (min-width: 768px) {
-      .section { padding-block: var(--s-12); }
       .hero.section { padding-block: var(--s-10) var(--s-12); }
       .hero__content { gap: 18px; }
       .hero-orbit { margin-block: 0; }
@@ -2545,7 +2550,6 @@
       .legacy-form__shell {
         width: min(100% - 56px, 760px);
       }
-      .section { padding-block: 56px; }
       .hero.section { padding-block-start: var(--s-10); }
       .hero__actions { max-width: 430px; }
       .tier-card { padding: 20px; }
